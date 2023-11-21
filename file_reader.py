@@ -26,6 +26,7 @@ def get_result_filename(folder_path, file_name):
     return checked_file_name
 
 
+# get_file_names
 def get_file_paths(amount_of_files=0):
     r_files = []
     e_files = []

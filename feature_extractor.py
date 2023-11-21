@@ -1,4 +1,5 @@
 from file_reader import *
+import pandas as pd
 
 
 def remove_columns(dataframe, columns_to_remove):
@@ -54,7 +55,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
     return result_dataframe
 
 
-def extract_and_format_data(amount_of_files):
+def extract_and_format_data(amount_of_files, is_divided_to_races=False):
     r_files, e_files, h_files, res_files = get_file_paths(amount_of_files)
     r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
@@ -72,6 +73,8 @@ def extract_and_format_data(amount_of_files):
         e_dataframe = read_file(FILE_PATH_DATA, e_fileName, [ENT_ID] + ENT_FIELDS, 'csv')
         h_dataframe = read_file(FILE_PATH_DATA, h_fileName, [HOR_ID] + HOR_FIELDS, 'csv')
         res_dataframe = read_file(FILE_PATH_RES, res_fileName, RES_FIELDS, 'txt')
+        # if iterator == 0:
+        #     print(res_dataframe)
 
         if r_raw_data is None:
             r_raw_data = r_dataframe
@@ -110,10 +113,20 @@ def extract_and_format_data(amount_of_files):
         extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data)
         r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
-        if feature_vectors is None:
-            feature_vectors = extracted_data
+        # print(type(extracted_data))
+        # extracted_data.set_option('display.max_columns', None)
+        # extracted_data.set_option('display.expand_frame_repr', False)
+        print(extracted_data)
+        if not is_divided_to_races:
+            if feature_vectors is None:
+                feature_vectors = extracted_data
+            else:
+                feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
         else:
-            feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
+            if feature_vectors is None:
+                feature_vectors = [extracted_data]
+            else:
+                feature_vectors.append(extracted_data)
 
         iterator += 1
         percent = iterator/amount_of_files
