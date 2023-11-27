@@ -38,10 +38,10 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
     for index, row in e_raw_data.iterrows():
 
         id_to_match = row['E3']
+        id_to_match2 = row['E4']
 
-        if id_to_match in h_raw_data['H3'].values:
-
-            matching_row = h_raw_data[h_raw_data['H3'] == id_to_match].iloc[0]
+        if id_to_match in h_raw_data['H3'].values and id_to_match2 in h_raw_data['H4'].values:
+            matching_row = h_raw_data[(h_raw_data['H3'] == id_to_match) & (h_raw_data['H4'].values == id_to_match2)].iloc[0]
             matching_row = pd.DataFrame(matching_row).T
 
             if h_selected_df.empty:
@@ -50,9 +50,13 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
                 h_selected_df = pd.concat([h_selected_df, matching_row], axis=0, ignore_index=True)
 
     result_dataframe = pd.concat([e_raw_data, r_selected_df, h_selected_df, res_raw_data], axis=1)
-    result_dataframe = remove_columns(result_dataframe, ['H3', 'E3', 'R4', 'RES0', 'RES4', 'E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
+    result_dataframe = remove_columns(result_dataframe, ['H3', 'H4', 'E3', 'E4', 'R4', 'RES0', 'RES4', 'E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
 
-    return result_dataframe
+    # check if there are missing rows
+    if len(r_selected_df.index) == len(e_raw_data.index) == len(h_selected_df.index):
+        return result_dataframe
+    else:
+        return None
 
 
 def extract_and_format_data(amount_of_files, is_divided_to_races=False):
@@ -69,12 +73,10 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
             print("Completed: " + str(int(percent * 100)) + "/100%")
             continue
 
-        r_dataframe = read_file(FILE_PATH_DATA, r_fileName, [RAC_ID] + RAC_FIELDS, 'csv')
-        e_dataframe = read_file(FILE_PATH_DATA, e_fileName, [ENT_ID] + ENT_FIELDS, 'csv')
-        h_dataframe = read_file(FILE_PATH_DATA, h_fileName, [HOR_ID] + HOR_FIELDS, 'csv')
-        res_dataframe = read_file(FILE_PATH_RES, res_fileName, RES_FIELDS, 'txt')
-        # if iterator == 0:
-        #     print(res_dataframe)
+        r_dataframe = read_file(FILE_PATH_DATA, r_fileName, RAC_ID + RAC_FIELDS, 'csv')
+        e_dataframe = read_file(FILE_PATH_DATA, e_fileName, ENT_ID + ENT_FIELDS, 'csv')
+        h_dataframe = read_file(FILE_PATH_DATA, h_fileName, HOR_ID + HOR_FIELDS, 'csv')
+        res_dataframe = read_file(FILE_PATH_RES, res_fileName, RES_ID + RES_FIELDS, 'txt')
 
         if r_raw_data is None:
             r_raw_data = r_dataframe
@@ -105,6 +107,8 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
         h_raw_data = h_raw_data.reset_index(drop=True)
         res_raw_data = res_raw_data.reset_index(drop=True)
 
+        #TODO create field names
+
         r_raw_data.columns = RAC_FIELD_NAMES
         e_raw_data.columns = ENT_FIELD_NAMES
         h_raw_data.columns = HOR_FIELD_NAMES
@@ -113,20 +117,17 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
         extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data)
         r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
-        # print(type(extracted_data))
-        # extracted_data.set_option('display.max_columns', None)
-        # extracted_data.set_option('display.expand_frame_repr', False)
-        print(extracted_data)
-        if not is_divided_to_races:
-            if feature_vectors is None:
-                feature_vectors = extracted_data
+        if extracted_data is not None:
+            if not is_divided_to_races:
+                if feature_vectors is None:
+                    feature_vectors = extracted_data
+                else:
+                    feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
             else:
-                feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
-        else:
-            if feature_vectors is None:
-                feature_vectors = [extracted_data]
-            else:
-                feature_vectors.append(extracted_data)
+                if feature_vectors is None:
+                    feature_vectors = [extracted_data]
+                else:
+                    feature_vectors.append(extracted_data)
 
         iterator += 1
         percent = iterator/amount_of_files

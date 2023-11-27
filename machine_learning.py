@@ -127,6 +127,6 @@ def classification_with_individual_results(df, target):
 
 
 def learn_and_test(df, target):
-    result = classification_with_individual_results(df, target)
+    result = classification_with_equal_results(df, target)
     # print(df)
     return result

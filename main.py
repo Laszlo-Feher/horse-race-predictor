@@ -6,9 +6,8 @@ from machine_learning import *
 
 def main():
     start = time.time()
-    feature_vectors = extract_and_format_data(1, True)
-    # score = learn_and_test(feature_vectors, 'RES21')
-    score = 0
+    feature_vectors = extract_and_format_data(21)
+    score = learn_and_test(feature_vectors, 'RES21')
     print('\n')
     end = time.time()
     print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
