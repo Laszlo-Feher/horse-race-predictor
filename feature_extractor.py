@@ -3,7 +3,6 @@ import pandas as pd
 
 
 def remove_columns(dataframe, columns_to_remove):
-
     new_dataframe = dataframe.copy()
 
     new_dataframe = new_dataframe.drop(columns=columns_to_remove, errors='ignore')
@@ -11,8 +10,46 @@ def remove_columns(dataframe, columns_to_remove):
     return new_dataframe
 
 
-def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data):
+string_to_number_mapping = {
+    HOR_FIELD_NAMES[5]: {
+        '2': 1,
+        '2UP': 2,
+        '3': 3,
+        '3UP': 4,
+        '4': 5,
+        '4UP': 6,
+        '5': 7,
+        '5UP': 8
+    },
+    RAC_FIELD_NAMES[9]: {
+        '2': 1,
+        '2UP': 2,
+        '3': 3,
+        '3UP': 4,
+        '4': 5,
+        '4UP': 6,
+        '5': 7,
+        '5UP': 8
+    },
+    ENT_FIELD_NAMES[11]: {
+        'f': 1,
+        'm': 2,
+        'g': 3,
+        'c': 4
+    }
+}
 
+
+def replace_strings_with_numbers(df, column_name):
+    # Define a mapping of string values to numeric values
+
+    # Use the map function to replace strings with numbers
+    df[column_name] = df[column_name].map(string_to_number_mapping[column_name])
+
+    return df
+
+
+def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data):
     for index, row in res_raw_data.iterrows():
         if row[RES_TARGET] != '1':
             res_raw_data.at[index, RES_TARGET] = 0
@@ -50,7 +87,15 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
                 h_selected_df = pd.concat([h_selected_df, matching_row], axis=0, ignore_index=True)
 
     result_dataframe = pd.concat([e_raw_data, r_selected_df, h_selected_df, res_raw_data], axis=1)
-    result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + ['RES0', 'RES4', 'E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
+
+    # result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
+
+    result_dataframe = replace_strings_with_numbers(result_dataframe, HOR_FIELD_NAMES[5])
+    result_dataframe = replace_strings_with_numbers(result_dataframe, RAC_FIELD_NAMES[9])
+    result_dataframe = replace_strings_with_numbers(result_dataframe, ENT_FIELD_NAMES[11])
+
+    # search for others:
+    result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
 
     # check if there are missing rows
     if len(r_selected_df.index) == len(e_raw_data.index) == len(h_selected_df.index):
@@ -107,7 +152,7 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
         h_raw_data = h_raw_data.reset_index(drop=True)
         res_raw_data = res_raw_data.reset_index(drop=True)
 
-        #TODO create field names
+        # TODO create field names
 
         r_raw_data.columns = RAC_FIELD_NAMES
         e_raw_data.columns = ENT_FIELD_NAMES
@@ -130,7 +175,7 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
                     feature_vectors.append(extracted_data)
 
         iterator += 1
-        percent = iterator/amount_of_files
+        percent = iterator / amount_of_files
         print("Completed: " + str(int(percent * 100)) + "/100%")
 
     return feature_vectors
