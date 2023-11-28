@@ -14,21 +14,21 @@ def remove_columns(dataframe, columns_to_remove):
 def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data):
 
     for index, row in res_raw_data.iterrows():
-        if row['RES21'] != '1':
-            res_raw_data.at[index, 'RES21'] = 0
+        if row[RES_TARGET] != '1':
+            res_raw_data.at[index, RES_TARGET] = 0
         else:
-            res_raw_data.at[index, 'RES21'] = 1
+            res_raw_data.at[index, RES_TARGET] = 1
 
     r_selected_df = pd.DataFrame(columns=RAC_FIELD_NAMES)
     h_selected_df = pd.DataFrame(columns=HOR_FIELD_NAMES)
 
     for index, row in e_raw_data.iterrows():
 
-        id_to_match = row['E3']
+        id_to_match = row[ENT_ID_NAMES[0]]
 
-        if id_to_match in r_raw_data['R4'].values:
+        if id_to_match in r_raw_data[RAC_ID_NAMES[0]].values:
 
-            matching_row = r_raw_data[r_raw_data['R4'] == id_to_match]
+            matching_row = r_raw_data[r_raw_data[RAC_ID_NAMES[0]] == id_to_match]
 
             if r_selected_df.empty:
                 r_selected_df = matching_row
@@ -37,11 +37,11 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
     for index, row in e_raw_data.iterrows():
 
-        id_to_match = row['E3']
-        id_to_match2 = row['E4']
+        id_to_match = row[ENT_ID_NAMES[0]]
+        id_to_match2 = row[ENT_ID_NAMES[1]]
 
-        if id_to_match in h_raw_data['H3'].values and id_to_match2 in h_raw_data['H4'].values:
-            matching_row = h_raw_data[(h_raw_data['H3'] == id_to_match) & (h_raw_data['H4'].values == id_to_match2)].iloc[0]
+        if id_to_match in h_raw_data[HOR_ID_NAMES[0]].values and id_to_match2 in h_raw_data[HOR_ID_NAMES[1]].values:
+            matching_row = h_raw_data[(h_raw_data[HOR_ID_NAMES[0]] == id_to_match) & (h_raw_data[HOR_ID_NAMES[1]].values == id_to_match2)].iloc[0]
             matching_row = pd.DataFrame(matching_row).T
 
             if h_selected_df.empty:
@@ -50,7 +50,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
                 h_selected_df = pd.concat([h_selected_df, matching_row], axis=0, ignore_index=True)
 
     result_dataframe = pd.concat([e_raw_data, r_selected_df, h_selected_df, res_raw_data], axis=1)
-    result_dataframe = remove_columns(result_dataframe, ['H3', 'H4', 'E3', 'E4', 'R4', 'RES0', 'RES4', 'E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
+    result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + ['RES0', 'RES4', 'E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
 
     # check if there are missing rows
     if len(r_selected_df.index) == len(e_raw_data.index) == len(h_selected_df.index):

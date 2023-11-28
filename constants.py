@@ -17,4 +17,7 @@ ENT_FIELD_NAMES = ['E3', 'E4', 'E9', 'E10', 'E11', 'E12', 'E13', 'E14', 'E15', '
 RAC_FIELD_NAMES = ['R4', 'R7', 'R8', 'R9', 'R10', 'R11', 'R12', 'R13', 'R14', 'R15', 'R16', 'R18', 'R19', 'R25', 'R28']
 RES_FIELD_NAMES = ['RES0', 'RES4', 'RES21']
 
+HOR_ID_NAMES = ['H3', 'H4']
+ENT_ID_NAMES = ['E3', 'E4']
+RAC_ID_NAMES = ['R4']
 RES_TARGET = 'RES21'

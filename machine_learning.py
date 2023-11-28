@@ -6,10 +6,12 @@ from sklearn import svm
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
+from constants import RES_TARGET
+
 
 def keep_same_number_of_zeros_as_ones(df):
-    ones = df[df['RES21'] == 1]
-    zeros = df[df['RES21'] == 0].head(len(ones))
+    ones = df[df[RES_TARGET] == 1]
+    zeros = df[df[RES_TARGET] == 0].head(len(ones))
 
     result_df = pd.concat([ones, zeros])
 
