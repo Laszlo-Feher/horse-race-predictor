@@ -48,6 +48,12 @@ def classification_with_bulk_fvs(df, target):
     y_test = y_test.astype(int)
     model.fit(x_train, y_train)
     result = model.score(x_test, y_test)
+
+    x_predicted = model.predict(x_test)
+    x_predicted_ps = pd.Series(x_predicted)
+
+    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+
     return result
 
 
@@ -120,15 +126,16 @@ def classification_with_individual_results(df, target):
         score = model.score(x_test, y_test)
         result.append(score)
 
-    # x_predicted = model.predict(x_test)
-    # x_predicted_ps = pd.Series(x_predicted)
+    x_predicted = model.predict(x_test)
+    x_predicted_ps = pd.Series(x_predicted)
 
-    # get_zero_and_one_accuracy(y_test, x_predicted_ps)
+    get_zero_and_one_accuracy(y_test, x_predicted_ps)
 
     return result
 
 
 def learn_and_test(df, target):
     result = classification_with_equal_results(df, target)
+    # result = classification_with_individual_results(df, target)
     # print(df)
     return result

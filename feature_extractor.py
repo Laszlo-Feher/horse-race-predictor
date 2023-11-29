@@ -104,6 +104,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
         return None
 
 
+# TODO iterator kathelyezese az if-ek miatt
 def extract_and_format_data(amount_of_files, is_divided_to_races=False):
     r_files, e_files, h_files, res_files = get_file_paths(amount_of_files)
     r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
@@ -117,62 +118,62 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
             percent = iterator / amount_of_files
             print("Completed: " + str(int(percent * 100)) + "/100%")
             continue
-
         r_dataframe = read_file(FILE_PATH_DATA, r_fileName, RAC_ID + RAC_FIELDS, 'csv')
         e_dataframe = read_file(FILE_PATH_DATA, e_fileName, ENT_ID + ENT_FIELDS, 'csv')
         h_dataframe = read_file(FILE_PATH_DATA, h_fileName, HOR_ID + HOR_FIELDS, 'csv')
         res_dataframe = read_file(FILE_PATH_RES, res_fileName, RES_ID + RES_FIELDS, 'txt')
 
-        if r_raw_data is None:
-            r_raw_data = r_dataframe
-        else:
-            r_raw_data = pd.concat([r_raw_data, r_dataframe], axis=0)
-
-        if e_raw_data is None:
-            e_raw_data = e_dataframe
-        else:
-            e_raw_data = pd.concat([e_raw_data, e_dataframe], axis=0)
-
-        if h_raw_data is None:
-            h_raw_data = h_dataframe
-        else:
-            h_raw_data = pd.concat([h_raw_data, h_dataframe], axis=0)
-
-        if res_raw_data is None:
-            res_raw_data = res_dataframe
-        else:
-            res_raw_data = pd.concat([res_raw_data, res_raw_data], axis=0)
-
-        if r_raw_data is None or e_raw_data is None or h_raw_data is None or res_raw_data is None:
-            print("1 or more file(s) is/are missing!")
-            return 0
-
-        r_raw_data = r_raw_data.reset_index(drop=True)
-        e_raw_data = e_raw_data.reset_index(drop=True)
-        h_raw_data = h_raw_data.reset_index(drop=True)
-        res_raw_data = res_raw_data.reset_index(drop=True)
-
-        # TODO create field names
-
-        r_raw_data.columns = RAC_FIELD_NAMES
-        e_raw_data.columns = ENT_FIELD_NAMES
-        h_raw_data.columns = HOR_FIELD_NAMES
-        res_raw_data.columns = RES_FIELD_NAMES
-
-        extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data)
-        r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
-
-        if extracted_data is not None:
-            if not is_divided_to_races:
-                if feature_vectors is None:
-                    feature_vectors = extracted_data
-                else:
-                    feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
+        if r_dataframe is not None and e_dataframe is not None and h_dataframe is not None and res_dataframe is not None:
+            if r_raw_data is None:
+                r_raw_data = r_dataframe
             else:
-                if feature_vectors is None:
-                    feature_vectors = [extracted_data]
+                r_raw_data = pd.concat([r_raw_data, r_dataframe], axis=0)
+
+            if e_raw_data is None:
+                e_raw_data = e_dataframe
+            else:
+                e_raw_data = pd.concat([e_raw_data, e_dataframe], axis=0)
+
+            if h_raw_data is None:
+                h_raw_data = h_dataframe
+            else:
+                h_raw_data = pd.concat([h_raw_data, h_dataframe], axis=0)
+
+            if res_raw_data is None:
+                res_raw_data = res_dataframe
+            else:
+                res_raw_data = pd.concat([res_raw_data, res_raw_data], axis=0)
+
+            if r_raw_data is None or e_raw_data is None or h_raw_data is None or res_raw_data is None:
+                print("1 or more file(s) is/are missing!")
+                return 0
+
+            r_raw_data = r_raw_data.reset_index(drop=True)
+            e_raw_data = e_raw_data.reset_index(drop=True)
+            h_raw_data = h_raw_data.reset_index(drop=True)
+            res_raw_data = res_raw_data.reset_index(drop=True)
+
+            # TODO create field names
+
+            r_raw_data.columns = RAC_FIELD_NAMES
+            e_raw_data.columns = ENT_FIELD_NAMES
+            h_raw_data.columns = HOR_FIELD_NAMES
+            res_raw_data.columns = RES_FIELD_NAMES
+
+            extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data)
+            r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
+
+            if extracted_data is not None:
+                if not is_divided_to_races:
+                    if feature_vectors is None:
+                        feature_vectors = extracted_data
+                    else:
+                        feature_vectors = pd.concat([feature_vectors, extracted_data], axis=0)
                 else:
-                    feature_vectors.append(extracted_data)
+                    if feature_vectors is None:
+                        feature_vectors = [extracted_data]
+                    else:
+                        feature_vectors.append(extracted_data)
 
         iterator += 1
         percent = iterator / amount_of_files
