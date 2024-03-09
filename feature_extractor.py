@@ -49,12 +49,15 @@ def replace_strings_with_numbers(df, column_name):
     return df
 
 
-def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data):
-    for index, row in res_raw_data.iterrows():
-        if row[RES_TARGET] != '1':
-            res_raw_data.at[index, RES_TARGET] = 0
-        else:
-            res_raw_data.at[index, RES_TARGET] = 1
+def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary):
+    if convert_to_binary:
+        for index, row in res_raw_data.iterrows():
+            if row[RES_TARGET] != '1':
+                res_raw_data.at[index, RES_TARGET] = 0
+            else:
+                res_raw_data.at[index, RES_TARGET] = 1
+    else:
+        res_raw_data[RES_TARGET] = res_raw_data[RES_TARGET].astype(int)
 
     r_selected_df = pd.DataFrame(columns=RAC_FIELD_NAMES)
     h_selected_df = pd.DataFrame(columns=HOR_FIELD_NAMES)
@@ -105,7 +108,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
 
 # TODO iterator kathelyezese az if-ek miatt
-def extract_and_format_data(amount_of_files, is_divided_to_races=False):
+def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_to_binary=True):
     r_files, e_files, h_files, res_files = get_file_paths(amount_of_files)
     r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
@@ -160,7 +163,7 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False):
             h_raw_data.columns = HOR_FIELD_NAMES
             res_raw_data.columns = RES_FIELD_NAMES
 
-            extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data)
+            extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary)
             r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
             if extracted_data is not None:
