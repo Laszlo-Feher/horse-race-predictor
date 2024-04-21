@@ -1,14 +1,14 @@
 import time
 
 from feature_extractor import *
+from file_writer import *
 from machine_learning import *
 
 
 def main():
     start = time.time()
-    feature_vectors = extract_and_format_data(30)
-    score = learn_and_test(feature_vectors, RES_TARGET)
-    # score = 0
+    feature_vectors = extract_and_format_data(100, False, True)
+    score = learn_and_test(feature_vectors, RES_TARGET, "classification_with_equal_results", False)
     print('\n')
     end = time.time()
     print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
@@ -18,4 +18,3 @@ def main():
 
 
 main()
-
