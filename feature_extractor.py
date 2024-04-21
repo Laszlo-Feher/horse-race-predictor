@@ -50,15 +50,24 @@ def replace_strings_with_numbers(df, column_name):
 
 
 
-def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary):
+def remove_rows_with_zero_res(df):
+    return df[df[RES_TARGET] != '0']
+
+
+def convert_result_type(df, convert_to_binary):
     if convert_to_binary:
-        for index, row in res_raw_data.iterrows():
+        for index, row in df.iterrows():
             if row[RES_TARGET] != '1':
-                res_raw_data.at[index, RES_TARGET] = 0
+                df.at[index, RES_TARGET] = 0
             else:
-                res_raw_data.at[index, RES_TARGET] = 1
+                df.at[index, RES_TARGET] = 1
     else:
-        res_raw_data[RES_TARGET] = res_raw_data[RES_TARGET].astype(int)
+        df[RES_TARGET] = df[RES_TARGET].astype(int)
+
+    return df
+
+
+def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary):
 
     r_selected_df = pd.DataFrame(columns=RAC_FIELD_NAMES)
     h_selected_df = pd.DataFrame(columns=HOR_FIELD_NAMES)
@@ -103,6 +112,8 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
     # check if there are missing rows
     if len(r_selected_df.index) == len(e_raw_data.index) == len(h_selected_df.index):
+        result_dataframe = remove_rows_with_zero_res(result_dataframe)
+        result_dataframe = convert_result_type(result_dataframe, convert_to_binary)
         return result_dataframe
     else:
         return None

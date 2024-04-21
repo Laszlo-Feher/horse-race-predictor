@@ -61,13 +61,19 @@ def get_zero_and_one_accuracy(y_data, x_data):
     predicted_ones_true_str = "Ebből helyes: " + str(predicted_ones_true)
     result_report.append(predicted_ones_true_str)
 
-    predicted_ones_accuracy_str = "Predikált 1-esek pontossága: " + str(predicted_ones_true / predicted_ones_all)
+    if predicted_ones_all != 0:
+        predicted_ones_accuracy_str = "Predikált 1-esek pontossága: " + str(predicted_ones_true / predicted_ones_all)
+    else:
+        predicted_ones_accuracy_str = "Predikált 1-esek pontossága: " + '0'
     result_report.append(predicted_ones_accuracy_str)
 
     real_ones = "Valós 1-esek: " + str(result_ones_all)
     result_report.append(real_ones)
 
-    real_ones_accuracy_str = "Valós 1-esek pontossága: " + str(result_ones_true / result_ones_all)
+    if result_ones_all != 0:
+        real_ones_accuracy_str = "Valós 1-esek pontossága: " + str(result_ones_true / result_ones_all)
+    else:
+        real_ones_accuracy_str = "Valós 1-esek pontossága: " + '0'
     result_report.append(real_ones_accuracy_str)
 
     result_report.append("\n")
@@ -78,13 +84,20 @@ def get_zero_and_one_accuracy(y_data, x_data):
     predicted_zeros_true_str = "Ebből helyes: " + str(predicted_zeros_true)
     result_report.append(predicted_zeros_true_str)
 
-    predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + str(predicted_zeros_true / predicted_zeros_all)
+    if predicted_zeros_all != 0:
+        predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + str(predicted_zeros_true / predicted_zeros_all)
+    else:
+        predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + '0'
     result_report.append(predicted_zeros_accuracy_str)
 
     real_zeros = "Valós 0-ások: " + str(result_zeros_all)
     result_report.append(real_zeros)
 
-    real_zeros_accuracy_str = "Valós 0-ások pontossága: " + str(result_ones_true / result_zeros_all)
+    if result_zeros_all != 0:
+        real_zeros_accuracy_str = "Valós 0-ások pontossága: " + str(result_ones_true / result_zeros_all)
+    else:
+        real_zeros_accuracy_str = "Valós 0-ások pontossága: " + '0'
+
     result_report.append(real_zeros_accuracy_str)
 
     for item in result_report:
