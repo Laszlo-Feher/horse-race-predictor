@@ -23,6 +23,7 @@ def get_result_filename(folder_path, file_name):
             '.txt')  # file type
 
     checked_file_name = check_file_existence(folder_path, res_file_name)
+    # 20180910_CH_DAY_ALB.txt
     return checked_file_name
 
 
@@ -33,12 +34,12 @@ def get_file_paths(amount_of_files=0):
     h_files = []
     res_files = []
 
-    file_names = os.listdir(FILE_PATH_DATA)
+    file_names = os.listdir(FILE_PATH_FILTERED_DATA)
     file_names.sort()
 
     iterator = 0
     for file_name in file_names:
-        if iterator >= amount_of_files * 5 and amount_of_files != 0:
+        if iterator >= amount_of_files * 3 and amount_of_files != 0:
             break
 
         if file_name[9] == 'R':

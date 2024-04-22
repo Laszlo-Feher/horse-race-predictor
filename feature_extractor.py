@@ -119,9 +119,21 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
         return None
 
 
+def check_same_file_name(r_files, e_files, h_files):
+    for r_file_name, e_file_name, h_file_name in zip(r_files, e_files, h_files):
+        if r_file_name[:9] + r_file_name[10:] != e_file_name[:9] + e_file_name[10:] != h_file_name[:9] + h_file_name[10:]:
+            return False
+
+    return True
+
+
 # TODO iterator kathelyezese az if-ek miatt
 def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_to_binary=True):
     r_files, e_files, h_files, res_files = get_file_paths(amount_of_files)
+
+    if not check_same_file_name(r_files, e_files, h_files):
+        return None
+
     r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
     feature_vectors = None
@@ -135,10 +147,10 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
             if iterator % 5 == 0:
                 print("Completed: " + str(int(percent * 100)) + "/100%")
             continue
-        r_dataframe = read_file(FILE_PATH_DATA, r_fileName, RAC_ID + RAC_FIELDS, 'csv')
-        e_dataframe = read_file(FILE_PATH_DATA, e_fileName, ENT_ID + ENT_FIELDS, 'csv')
-        h_dataframe = read_file(FILE_PATH_DATA, h_fileName, HOR_ID + HOR_FIELDS, 'csv')
-        res_dataframe = read_file(FILE_PATH_RES, res_fileName, RES_ID + RES_FIELDS, 'txt')
+        r_dataframe = read_file(FILE_PATH_FILTERED_DATA, r_fileName, RAC_ID + RAC_FIELDS, 'csv')
+        e_dataframe = read_file(FILE_PATH_FILTERED_DATA, e_fileName, ENT_ID + ENT_FIELDS, 'csv')
+        h_dataframe = read_file(FILE_PATH_FILTERED_DATA, h_fileName, HOR_ID + HOR_FIELDS, 'csv')
+        res_dataframe = read_file(FILE_PATH_FILTERED_RES, res_fileName, RES_ID + RES_FIELDS, 'txt')
 
         if r_dataframe is not None and e_dataframe is not None and h_dataframe is not None and res_dataframe is not None:
             if r_raw_data is None:
