@@ -1,3 +1,4 @@
+from debug import print_dataframe
 from file_reader import *
 import pandas as pd
 
@@ -49,6 +50,20 @@ def replace_strings_with_numbers(df, column_name):
     return df
 
 
+def group_races_by_id(df):
+    df.reset_index(drop=True, inplace=True)
+
+    df['ID'] = 0
+
+    id_value = 0
+
+    for index, row in df.iterrows():
+        if index > 0 and row['RES4'] > df.at[index - 1, 'RES4']:
+            id_value = id_value + 1
+        df.at[index, 'ID'] = id_value
+
+    return df
+
 
 def remove_rows_with_zero_res(df):
     return df[df[RES_TARGET] != '0']
@@ -57,7 +72,7 @@ def remove_rows_with_zero_res(df):
 def convert_result_type(df, convert_to_binary):
     if convert_to_binary:
         for index, row in df.iterrows():
-            if row[RES_TARGET] != '1':
+            if row[RES_TARGET] != 1:
                 df.at[index, RES_TARGET] = 0
             else:
                 df.at[index, RES_TARGET] = 1
@@ -107,13 +122,20 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
     result_dataframe = replace_strings_with_numbers(result_dataframe, RAC_FIELD_NAMES[9])
     result_dataframe = replace_strings_with_numbers(result_dataframe, ENT_FIELD_NAMES[11])
 
-    # search for others:
-    result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
-
     # check if there are missing rows
     if len(r_selected_df.index) == len(e_raw_data.index) == len(h_selected_df.index):
+
         result_dataframe = remove_rows_with_zero_res(result_dataframe)
+
+        result_dataframe[RES_TARGET] = result_dataframe[RES_TARGET].astype(int)
+
+        result_dataframe = group_races_by_id(result_dataframe)
+
         result_dataframe = convert_result_type(result_dataframe, convert_to_binary)
+
+        # search for others:
+        result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
+
         return result_dataframe
     else:
         return None
