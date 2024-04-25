@@ -12,17 +12,19 @@ def main(copy_files, run_learning):
 
     if run_learning:
         start = time.time()
-        feature_vectors = extract_and_format_data(6589, False, True)
+        feature_vectors = extract_and_format_data(1, False, False)
         if feature_vectors is None:
             print("Something went wrong during data extracting and formatting!")
             return 0
 
-        score = learn_and_test(feature_vectors, RES_TARGET, "classification_with_equal_results", False)
+        # TODO: overview
+        feature_vectors = feature_vectors.astype(float)
+        score = learn_and_test(feature_vectors, RES_TARGET, "pairwise_learn_to_rank", False)
         print('\n')
         end = time.time()
         print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
         print('\n')
-        print("Test Accuracy: " + str(score))
+        # print("Test Accuracy: " + str(score))
 
     return 0
 

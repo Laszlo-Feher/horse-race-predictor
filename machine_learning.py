@@ -8,6 +8,7 @@ from sklearn.metrics import accuracy_score
 
 from constants import RES_TARGET
 from file_writer import *
+from pairwise_ranking import start_ranking
 
 
 def keep_same_number_of_zeros_as_ones(df, is_divided_to_races):
@@ -207,6 +208,17 @@ def split_to_first_3_and_the_rest(df, target):
     return "not implemented"
 
 
+def pairwise_learn_to_rank(df, target):
+    result = start_ranking(df)
+
+    for group, data in result.items():
+        print("Group ID:", group)
+        print("Predicted Positions:", data['predicted_positions'])
+        print("Original RES21 Values:", data['original_RES21'])
+
+    return result
+
+
 def learn_and_test(df, target, algorythm, is_divided_to_races):
     result = 'no results'
 
@@ -216,6 +228,8 @@ def learn_and_test(df, target, algorythm, is_divided_to_races):
         result = classification_with_equal_results(df, target, is_divided_to_races)
     elif algorythm == "classification_with_individual_results":
         result = classification_with_individual_results(df, target)
+    elif algorythm == "pairwise_learn_to_rank":
+        result = pairwise_learn_to_rank(df, target)
     else:
         print("Not an implemented method!")
 
