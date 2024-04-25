@@ -50,19 +50,17 @@ def replace_strings_with_numbers(df, column_name):
     return df
 
 
-def group_races_by_id(df):
+def group_races_by_id(df, race_id):
     df.reset_index(drop=True, inplace=True)
 
     df['ID'] = 0
 
-    id_value = 0
-
     for index, row in df.iterrows():
         if index > 0 and row['RES4'] > df.at[index - 1, 'RES4']:
-            id_value = id_value + 1
-        df.at[index, 'ID'] = id_value
+            race_id = race_id + 1
+        df.at[index, 'ID'] = race_id
 
-    return df
+    return df, race_id
 
 
 def remove_rows_with_zero_res(df):
@@ -82,7 +80,7 @@ def convert_result_type(df, convert_to_binary):
     return df
 
 
-def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary):
+def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary, race_id):
 
     r_selected_df = pd.DataFrame(columns=RAC_FIELD_NAMES)
     h_selected_df = pd.DataFrame(columns=HOR_FIELD_NAMES)
@@ -129,16 +127,16 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
         result_dataframe[RES_TARGET] = result_dataframe[RES_TARGET].astype(int)
 
-        result_dataframe = group_races_by_id(result_dataframe)
+        result_dataframe, race_id = group_races_by_id(result_dataframe, race_id)
 
         result_dataframe = convert_result_type(result_dataframe, convert_to_binary)
 
         # search for others:
         result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
 
-        return result_dataframe
+        return result_dataframe, race_id
     else:
-        return None
+        return None, race_id
 
 
 def check_same_file_name(r_files, e_files, h_files):
@@ -162,6 +160,7 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
 
     iterator = 0
     calculated_files = 0
+    race_id = 0
     for r_fileName, e_fileName, h_fileName, res_fileName in zip(r_files, e_files, h_files, res_files):
         if None in (r_fileName, e_fileName, h_fileName, res_fileName):
             iterator += 1
@@ -211,7 +210,7 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
             h_raw_data.columns = HOR_FIELD_NAMES
             res_raw_data.columns = RES_FIELD_NAMES
 
-            extracted_data = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary)
+            extracted_data, race_id = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary, race_id)
             r_raw_data, e_raw_data, h_raw_data, res_raw_data = None, None, None, None
 
             if extracted_data is not None:
