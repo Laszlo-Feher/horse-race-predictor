@@ -1,9 +1,8 @@
 import time
 
-from feature_extractor import *
-from file_filterer import filter_files_and_copy
-from file_writer import *
-from machine_learning import *
+from feature_vectors.feature_extractor import *
+from io_utils.file_filterer import filter_files_and_copy
+from machine_learning.machine_learning import *
 
 
 def main(copy_files, run_learning):

@@ -1,7 +1,7 @@
 import os
 import pandas as pd
 
-from constants import *
+from feature_vectors.constants import *
 
 
 def check_file_existence(folder_path, file_name):

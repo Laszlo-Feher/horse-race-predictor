@@ -1,7 +1,7 @@
-FILE_PATH_DATA = "../Post Time Daily Files/Exported Data"
-FILE_PATH_FILTERED_DATA = "../Post Time Daily Files Filtered/Exported Data"
-FILE_PATH_RES = "../Post Time Daily Files/Result Charts"
-FILE_PATH_FILTERED_RES = "../Post Time Daily Files Filtered/Result Charts"
+FILE_PATH_DATA = "data/Post Time Daily Files/Exported Data"
+FILE_PATH_FILTERED_DATA = "data/Post Time Daily Files Filtered/Exported Data"
+FILE_PATH_RES = "data/Post Time Daily Files/Result Charts"
+FILE_PATH_FILTERED_RES = "data/Post Time Daily Files Filtered/Result Charts"
 
 RAC_ID = [4]
 ENT_ID = [3, 4]

@@ -1,14 +1,10 @@
 import pandas as pd
 from sklearn.svm import SVC
 from sklearn.model_selection import train_test_split
-import numpy as np
-from sklearn import svm
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import accuracy_score
 
-from constants import RES_TARGET
-from file_writer import *
-from pairwise_ranking import start_ranking
+from feature_vectors.constants import RES_TARGET
+from io_utils.file_writer import *
+from machine_learning.pairwise_ranking import start_ranking
 
 
 def keep_same_number_of_zeros_as_ones(df, is_divided_to_races):

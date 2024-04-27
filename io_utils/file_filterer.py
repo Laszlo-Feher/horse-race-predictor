@@ -1,8 +1,8 @@
 import os
 import shutil
 import time
-from constants import FILE_PATH_RES, FILE_PATH_DATA, FILE_PATH_FILTERED_DATA, FILE_PATH_FILTERED_RES
-from file_reader import get_result_file_name
+from feature_vectors.constants import FILE_PATH_RES, FILE_PATH_DATA, FILE_PATH_FILTERED_DATA, FILE_PATH_FILTERED_RES
+from io_utils.file_reader import get_result_file_name
 
 
 def filter_files_by_type(folder_path):
