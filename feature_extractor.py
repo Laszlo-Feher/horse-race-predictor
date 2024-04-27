@@ -161,17 +161,17 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
     iterator = 0
     calculated_files = 0
     race_id = 0
-    for r_fileName, e_fileName, h_fileName, res_fileName in zip(r_files, e_files, h_files, res_files):
-        if None in (r_fileName, e_fileName, h_fileName, res_fileName):
+    for r_file_name, e_file_name, h_file_name, res_file_name in zip(r_files, e_files, h_files, res_files):
+        if None in (r_file_name, e_file_name, h_file_name, res_file_name):
             iterator += 1
             percent = iterator / amount_of_files
             if iterator % 5 == 0:
                 print("Completed: " + str(int(percent * 100)) + "/100%")
             continue
-        r_dataframe = read_file(FILE_PATH_FILTERED_DATA, r_fileName, RAC_ID + RAC_FIELDS, 'csv')
-        e_dataframe = read_file(FILE_PATH_FILTERED_DATA, e_fileName, ENT_ID + ENT_FIELDS, 'csv')
-        h_dataframe = read_file(FILE_PATH_FILTERED_DATA, h_fileName, HOR_ID + HOR_FIELDS, 'csv')
-        res_dataframe = read_file(FILE_PATH_FILTERED_RES, res_fileName, RES_ID + RES_FIELDS, 'txt')
+        r_dataframe = read_file(FILE_PATH_FILTERED_DATA, r_file_name, RAC_ID + RAC_FIELDS, 'csv')
+        e_dataframe = read_file(FILE_PATH_FILTERED_DATA, e_file_name, ENT_ID + ENT_FIELDS, 'csv')
+        h_dataframe = read_file(FILE_PATH_FILTERED_DATA, h_file_name, HOR_ID + HOR_FIELDS, 'csv')
+        res_dataframe = read_file(FILE_PATH_FILTERED_RES, res_file_name, RES_ID + RES_FIELDS, 'txt')
 
         if r_dataframe is not None and e_dataframe is not None and h_dataframe is not None and res_dataframe is not None:
             if r_raw_data is None:

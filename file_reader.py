@@ -13,7 +13,7 @@ def check_file_existence(folder_path, file_name):
         return None
 
 
-def get_result_filename(folder_path, file_name):
+def get_result_file_name(folder_path, file_name):
     res_file_name = (
             '20' + file_name[10] + file_name[11] +  # year 2018
             file_name[4] + file_name[5] +  # month 09
@@ -44,7 +44,7 @@ def get_file_paths(amount_of_files=0):
 
         if file_name[9] == 'R':
             r_files.append(file_name)
-            res_files.append(get_result_filename(FILE_PATH_RES, file_name))
+            res_files.append(get_result_file_name(FILE_PATH_RES, file_name))
 
         if file_name[9] == 'E':
             e_files.append(file_name)

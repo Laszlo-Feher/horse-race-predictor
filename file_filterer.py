@@ -2,7 +2,7 @@ import os
 import shutil
 import time
 from constants import FILE_PATH_RES, FILE_PATH_DATA, FILE_PATH_FILTERED_DATA, FILE_PATH_FILTERED_RES
-from file_reader import get_result_filename
+from file_reader import get_result_file_name
 
 
 def filter_files_by_type(folder_path):
@@ -12,13 +12,13 @@ def filter_files_by_type(folder_path):
     res_files = []
 
     # Iterate over files in the folder
-    for filename in os.listdir(folder_path):
-        if filename[9] == 'R':
-            r_files.append(filename[:9] + filename[10:])
-        elif filename[9] == 'E':
-            e_files.append(filename[:9] + filename[10:])
-        elif filename[9] == 'H':
-            h_files.append(filename[:9] + filename[10:])
+    for file_name in os.listdir(folder_path):
+        if file_name[9] == 'R':
+            r_files.append(file_name[:9] + file_name[10:])
+        elif file_name[9] == 'E':
+            e_files.append(file_name[:9] + file_name[10:])
+        elif file_name[9] == 'H':
+            h_files.append(file_name[:9] + file_name[10:])
 
     for element in r_files[:]:
         if element not in e_files or element not in h_files:
@@ -32,12 +32,12 @@ def filter_files_by_type(folder_path):
         if element not in r_files or element not in e_files:
             h_files.remove(element)
 
-    # generate result filename, remove element if not exist, else add to array
+    # generate result file name, remove element if not exist, else add to array
     for element in r_files[:]:
         temp_r_file_name = element[:9] + 'R' + element[9:]
-        res_filename = get_result_filename(FILE_PATH_RES, temp_r_file_name)
-        if res_filename is not None:
-            res_files.append(res_filename)
+        res_file_name = get_result_file_name(FILE_PATH_RES, temp_r_file_name)
+        if res_file_name is not None:
+            res_files.append(res_file_name)
         else:
             r_files.remove(element)
             e_files.remove(element)
