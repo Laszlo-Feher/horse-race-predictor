@@ -17,7 +17,7 @@ def train_test_split_and_modelling(df):
     test_data = df.iloc[X_test_inds]
 
     # We need to keep the id for later predictions
-    X_test = test_data.loc[:, ~test_data.columns.isin(['ID', 'RES21'])]
+    X_test = test_data.loc[:]
     y_test = test_data.loc[:, 'RES21']
 
     model = xgb.XGBRanker(
@@ -32,7 +32,7 @@ def train_test_split_and_modelling(df):
     )
 
     model.fit(X_train, y_train, group=groups, verbose=True)
-    return model
+    return model, X_test, y_test
 
 
 def predict(model, df):
@@ -43,7 +43,7 @@ def rank_feature(predictions):
     # Assuming predictions is the output from start_ranking(df)
     ranked_samples = {}
     for group, pred_scores in predictions.items():
-        sorted_indices = pred_scores.argsort()[::-1]  # Sort indices in descending order
+        sorted_indices = pred_scores.argsort()[::1]  # Sort indices in escending order
         ranked_samples[group] = sorted_indices  # Start ranking from 1
 
     return ranked_samples
@@ -51,10 +51,10 @@ def rank_feature(predictions):
 
 def start_ranking(df):
     # Train ranking model
-    model = train_test_split_and_modelling(df)
+    model, X_test, y_test = train_test_split_and_modelling(df)
 
     # Predict
-    predictions = (df.groupby('ID')
+    predictions = (X_test.groupby('ID')
                    .apply(lambda x: predict(model, x.drop(columns=['ID', 'RES21']))))
 
     # print(rank_feature(predictions))

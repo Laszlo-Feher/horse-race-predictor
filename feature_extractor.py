@@ -232,5 +232,6 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
             print("Completed: " + str(int(percent * 100)) + "/100%")
 
     print("Calculated files/ all files:  " + str(calculated_files) + "/" + str(iterator))
+    print("Number of races: " + str(race_id+1))
 
     return feature_vectors
