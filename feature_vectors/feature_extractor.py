@@ -79,6 +79,28 @@ def convert_result_type(df, convert_to_binary):
     return df
 
 
+def take_same_number_of_rows(e_raw_data, r_selected_df, h_selected_df, res_raw_data):
+    # Step 1: Determine the number of rows in each DataFrame
+    num_rows = {
+        'e_raw_data': len(e_raw_data),
+        'r_selected_df': len(r_selected_df),
+        'h_selected_df': len(h_selected_df),
+        'res_raw_data': len(res_raw_data)
+    }
+
+    # Step 2: Find the DataFrame with the lowest number of rows
+    min_rows_df = min(num_rows, key=num_rows.get)
+
+    # Step 3: Slice each DataFrame to contain only that number of rows
+    min_rows = num_rows[min_rows_df]
+    e_raw_data = e_raw_data.iloc[:min_rows]
+    r_selected_df = r_selected_df.iloc[:min_rows]
+    h_selected_df = h_selected_df.iloc[:min_rows]
+    res_raw_data = res_raw_data.iloc[:min_rows]
+
+    return e_raw_data, r_selected_df, h_selected_df, res_raw_data
+
+
 def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary, race_id):
 
     r_selected_df = pd.DataFrame(columns=RAC_FIELD_NAMES)
@@ -110,6 +132,8 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
                 h_selected_df = matching_row
             else:
                 h_selected_df = pd.concat([h_selected_df, matching_row], axis=0, ignore_index=True)
+
+    e_raw_data, r_selected_df, h_selected_df, res_raw_data = take_same_number_of_rows(e_raw_data, r_selected_df, h_selected_df, res_raw_data)
 
     result_dataframe = pd.concat([e_raw_data, r_selected_df, h_selected_df, res_raw_data], axis=1)
 
