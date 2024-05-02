@@ -68,3 +68,14 @@ def start_ranking(df):
         }
 
     return ranked_samples
+
+
+def pairwise_learn_to_rank(df, target):
+    result = start_ranking(df)
+
+    for group, data in result.items():
+        print("Group ID:", group)
+        print("Predicted Positions:", data['predicted_positions'])
+        print("Original RES21 Values:", data['original_RES21'])
+
+    return result
