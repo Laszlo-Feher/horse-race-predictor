@@ -2,6 +2,7 @@ import time
 
 from feature_vectors.feature_extractor import *
 from io_utils.file_filterer import filter_files_and_copy
+from io_utils.file_writer import write_dataframe_to_file
 from machine_learning.machine_learning import *
 from utils.debug import *
 
@@ -52,12 +53,12 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races):
 
             start = time.time()
 
-            score = learn_and_test(selected_feature_vectors, RES_TARGET, "pairwise_learn_to_rank", False)
+            score = learn_and_test(selected_feature_vectors, RES_TARGET, "classification_with_equal_results")
             print('\n')
             end = time.time()
             print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
-            # print('\n')
-            # print("Test Accuracy: " + str(score))
+            print('\n')
+            print("Test Accuracy: " + str(score))
 
     return 0
 
