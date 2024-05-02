@@ -57,3 +57,24 @@ def reset_dataframe_index(dataframe):
     DataFrame: The DataFrame with the index reset.
     """
     return dataframe.reset_index(drop=True)
+
+
+def get_num_unique_ids(dataframe):
+    num_unique_ids = dataframe['ID'].nunique()
+    return num_unique_ids
+
+
+def check_dataframe(dataframe):
+    if dataframe is None:
+        print("DataFrame is None.")
+        return False
+
+    if dataframe.empty:
+        print("DataFrame is empty.")
+        return False
+
+    if len(dataframe) == 0:
+        print("DataFrame has no rows.")
+        return False
+
+    return True

@@ -90,3 +90,26 @@ def read_file(file_path, file_name, selected_fields, file_extension='csv'):
         selected_data = data.iloc[:, selected_fields_adjusted]
 
     return selected_data
+
+
+def read_dataframe_from_file(directory_path):
+    """
+    Read a Pandas DataFrame from a file with a specific name within a directory.
+
+    Parameters:
+    directory_path (str): The path to the directory from which the DataFrame file will be read.
+
+    Returns:
+    DataFrame: The DataFrame read from the file, or None if an error occurs.
+    """
+    file_name = "exported_feature_vectors.csv"
+    file_path = os.path.join(directory_path, file_name)
+
+    try:
+        dataframe = pd.read_csv(file_path)
+        print("DataFrame has been successfully read from", file_path)
+        return dataframe
+    except Exception as e:
+        print("Error occurred while reading the DataFrame from", file_path)
+        print("Error:", e)
+        return None

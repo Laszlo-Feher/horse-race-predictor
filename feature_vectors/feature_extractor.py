@@ -258,3 +258,21 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
     print("Number of races: " + str(race_id+1))
 
     return feature_vectors
+
+
+def get_rows_by_id_range(dataframe, number):
+    max_id = dataframe['ID'].max()
+    number = min(number, max_id)
+    number = int(number)
+
+    ids = set(range(number + 1))
+    missing_ids = ids - set(dataframe['ID'])
+
+    for missing_id in missing_ids:
+        number += 1
+        ids.add(number)
+        ids.remove(missing_id)
+        missing_ids = ids - set(dataframe['ID'])
+
+    filtered_df = dataframe[dataframe['ID'].isin(ids)]
+    return filtered_df

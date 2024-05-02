@@ -27,3 +27,25 @@ def write_to_file(array_content, file_name):
         print("Content successfully written to the file:", file_name)
     except Exception as e:
         print("Error occurred while writing to file:", e)
+
+
+def write_dataframe_to_file(dataframe, directory_path):
+    """
+    Write a Pandas DataFrame to a file with a specific name within a directory.
+
+    Parameters:
+    dataframe (DataFrame): The DataFrame to be written to the file.
+    directory_path (str): The path to the directory where the DataFrame file will be written.
+
+    Returns:
+    None
+    """
+    file_name = "exported_feature_vectors.csv"
+    file_path = os.path.join(directory_path, file_name)
+
+    try:
+        dataframe.to_csv(file_path, index=False)
+        print("DataFrame has been successfully written to", file_path)
+    except Exception as e:
+        print("Error occurred while writing the DataFrame to", file_path)
+        print("Error:", e)
