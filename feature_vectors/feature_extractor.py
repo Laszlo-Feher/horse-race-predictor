@@ -148,11 +148,9 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
         result_dataframe = remove_rows_with_zero_res(result_dataframe)
 
-        result_dataframe[RES_TARGET] = result_dataframe[RES_TARGET].astype(int)
+        result_dataframe = convert_result_type(result_dataframe, convert_to_binary)
 
         result_dataframe, race_id = group_races_by_id(result_dataframe, race_id)
-
-        result_dataframe = convert_result_type(result_dataframe, convert_to_binary)
 
         # search for others:
         result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
@@ -170,8 +168,8 @@ def check_same_file_name(r_files, e_files, h_files):
     return True
 
 
-# TODO iterator kathelyezese az if-ek miatt
-def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_to_binary=True):
+# IMPORTANT: is_divided_to_races, convert_to_binary are deprecated in feature_extractor, default usage False.
+def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_to_binary=False):
     r_files, e_files, h_files, res_files = get_file_paths(amount_of_files)
 
     if not check_same_file_name(r_files, e_files, h_files):

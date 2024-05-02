@@ -17,7 +17,7 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races):
         filter_files_and_copy()
 
     if create_feature_vectors:
-        feature_vectors = extract_and_format_data(6589, False, False)
+        feature_vectors = extract_and_format_data(6589)
         feature_vectors = reset_dataframe_index(feature_vectors)
         feature_vectors = feature_vectors.astype(float)
 
@@ -40,6 +40,10 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races):
         print("Feature vectors prepared!")
         print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
         print("Number of unique IDs:", num_ids, "\n")
+
+        # check selected_feature_vectors, no ml
+        # print(selected_feature_vectors)
+        # selected_feature_vectors = None
 
         # check dataframe before learning
         if check_dataframe(selected_feature_vectors):
