@@ -13,7 +13,7 @@ from utils.debug import *
 # estimated time: 994.45 in seconds
 
 
-def main(copy_files, create_feature_vectors, run_learning, amount_of_races):
+def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm):
     if copy_files:
         filter_files_and_copy()
 
@@ -53,7 +53,7 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races):
 
             start = time.time()
 
-            score = learn_and_test(selected_feature_vectors, RES_TARGET, "classification_with_equal_results")
+            score = learn_and_test(selected_feature_vectors, RES_TARGET, algorythm)
             print('\n')
             end = time.time()
             print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
@@ -67,5 +67,6 @@ copy_files = False
 create_feature_vectors = False
 run_learning = True
 amount_of_races = 100
+algorythm = "classification_with_individual_results"
 
-main(copy_files, create_feature_vectors, run_learning, amount_of_races)
+main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm)

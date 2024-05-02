@@ -6,6 +6,31 @@ from io_utils.file_writer import *
 from feature_vectors.constants import RES_TARGET
 
 
+def convert_dataframe_to_array_by_id(df):
+    """
+    Groups DataFrame rows by the 'ID' column and returns a list of DataFrames
+    where each DataFrame contains rows with the same ID.
+
+    Parameters:
+    df (pandas.DataFrame): Input DataFrame.
+
+    Returns:
+    list: List of DataFrames where each DataFrame contains rows with the same ID.
+    """
+    grouped_data = []
+    for _, row in df.iterrows():
+        id_value = row['ID']
+        found = False
+        for group_df in grouped_data:
+            if id_value in group_df['ID'].values:
+                group_df = pd.concat([group_df, row], axis=0)
+                found = True
+                break
+        if not found:
+            grouped_data.append(df[df['ID'] == id_value].copy())
+    return grouped_data
+
+
 def convert_result_to_binary(df):
     for index, row in df.iterrows():
         if row[RES_TARGET] != 1:
@@ -168,8 +193,9 @@ def classification_with_equal_results(df_original, target, is_divided_to_races=F
 
 def classification_with_individual_results(df, target):
     df = convert_result_to_binary(df)
-    # df = df.fillna(df.median())
-    df = [d.fillna(d.median()) for d in df]
+    df = df.fillna(df.median())
+    df = convert_dataframe_to_array_by_id(df)
+
     df_train, df_test = split_array(df, 0.8)
     x_train, y_train, x_test, y_test = None, None, None, None
     result = []
