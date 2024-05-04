@@ -1,5 +1,5 @@
 from machine_learning.classification import classification_with_bulk_fvs, classification_with_individual_results, \
-    classification_with_equal_results, split_to_first_3_and_the_rest
+    classification_with_equal_results, split_to_first_3_and_the_rest, classify_by_race_without_conversion
 from machine_learning.pairwise_ranking import pairwise_learn_to_rank
 
 
@@ -23,6 +23,8 @@ def learn_and_test(df, target, algorythm):
             return classification_with_equal_results(df, target)
         case "split_to_first_3_and_the_rest":
             return split_to_first_3_and_the_rest(df, target)
+        case "classify_by_race_without_conversion":
+            return classify_by_race_without_conversion(df, target)
 
         case "pairwise_learn_to_rank":
             return pairwise_learn_to_rank(df, target)

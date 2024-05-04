@@ -29,6 +29,12 @@ Classification methods:
   + distribution of rankings: 1-3 vs rest - 50-50%, then 1 vs 2-3 33-67%
   - missing data: filled median
   + kept in races: yes
+- classify_by_race_without_conversion:
+  + train - test data: 80 - 20%
+  + train data: keep original results
+  + distribution of rankings:  all racer
+  - missing data: filled median
+  + kept in races: yes
 
 
 Reports structure:
