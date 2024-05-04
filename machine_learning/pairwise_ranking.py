@@ -8,6 +8,8 @@ def train_test_split_and_modelling(df):
     X_train_inds, X_test_inds = next(gss)
 
     train_data = df.iloc[X_train_inds]
+    train_data = train_data.sample(frac=1).reset_index(drop=True)
+
     X_train = train_data.loc[:, ~train_data.columns.isin(['ID', 'RES21'])]  # Exclude 'ID' and 'RES21' columns
     y_train = train_data.loc[:, 'RES21']  # Only 'RES21' column
 
@@ -15,6 +17,8 @@ def train_test_split_and_modelling(df):
     # groups = train_data.groupby('ID').size().to_numpy()
 
     test_data = df.iloc[X_test_inds]
+    test_data = test_data.sample(frac=1).reset_index(drop=True)
+
 
     # We need to keep the id for later predictions
     X_test = test_data.loc[:]

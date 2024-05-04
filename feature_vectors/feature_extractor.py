@@ -59,6 +59,7 @@ def group_races_by_id(df, race_id):
             race_id = race_id + 1
         df.at[index, 'ID'] = race_id
 
+    race_id = race_id + 1
     return df, race_id
 
 
