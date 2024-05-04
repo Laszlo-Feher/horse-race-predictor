@@ -281,8 +281,6 @@ def classify_by_race_without_conversion(df, target):
     y_test = x_test[target]
     x_test = x_test.drop(target, axis='columns')
 
-    print(x_train, x_test, y_train, y_test)
-
     model = SVC()
     y_train = y_train.astype(int)
     y_test = y_test.astype(int)
@@ -302,8 +300,6 @@ def split_to_first_3_and_the_rest(df, target):
     df = df.fillna(df.median())
     x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
 
-    y_train = x_train[target]
-
     # Set target column to 1 for IDs 1 to 3
     x_train.loc[df[target].isin([1, 2, 3]), target] = 1
     # Set target column to 0 for IDs not in 1 to 3
@@ -319,7 +315,6 @@ def split_to_first_3_and_the_rest(df, target):
     temp_x_test.loc[~df[target].isin([1]), target] = 0
     y_test_top_1_binary = temp_x_test[target]
 
-    y_test = x_test[target]
     x_test.loc[df[target].isin([1, 2, 3]), target] = 1
     x_test.loc[~df[target].isin([1, 2, 3]), target] = 0
     y_test_top_3_binary = x_test[target]
@@ -330,14 +325,10 @@ def split_to_first_3_and_the_rest(df, target):
     y_train_top_3_binary = y_train_top_3_binary.astype(int)
     y_test_top_3_binary = y_test_top_3_binary.astype(int)
 
-    # Count the occurrences of each value in the "target" column
+    # Print the number of 0 and 1
     # value_counts = y_train_top_3_binary.value_counts()
-
-    # Access the counts of 0 and 1
     # count_0 = value_counts.get(0, 0)
     # count_1 = value_counts.get(1, 0)
-
-    # Print the counts
     # print("Count of 0:", count_0)
     # print("Count of 1:", count_1)
 
@@ -346,8 +337,7 @@ def split_to_first_3_and_the_rest(df, target):
 
     x_predicted = model_top_3.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
-    x_predicted_df = pd.DataFrame(x_predicted)
-    print(x_predicted_ps)
+
     get_zero_and_one_accuracy(y_test_top_3_binary, x_predicted_ps)
 
     filtered_features = []
@@ -379,6 +369,6 @@ def split_to_first_3_and_the_rest(df, target):
     x_predicted_top_1 = model_top_1.predict(x_test_top_1)
     x_predicted_ps_top_1 = pd.Series(x_predicted_top_1)
 
-    get_zero_and_one_accuracy(y_test_top_1, x_predicted_top_1)
+    get_zero_and_one_accuracy(y_test_top_1, x_predicted_ps_top_1)
 
     return result,
