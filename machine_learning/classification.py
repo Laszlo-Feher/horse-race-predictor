@@ -1,9 +1,41 @@
 import pandas as pd
 from sklearn.svm import SVC
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split, GroupShuffleSplit
 
 from io_utils.file_writer import *
 from feature_vectors.constants import RES_TARGET
+
+
+def custom_group_split(df, id_column, test_size=0.2, random_state=None):
+    """
+    Splits the DataFrame into training and testing sets while preserving groups (IDs).
+
+    Parameters:
+        df (DataFrame): The DataFrame to be split.
+        id_column (str): The name of the column containing the IDs.
+        test_size (float or int, optional): The proportion of the dataset to include in the test split.
+                                             Default is 0.2.
+        random_state (int, RandomState instance or None, optional): Controls the randomness of the split.
+                                                                    Default is None.
+
+    Returns:
+        tuple: A tuple containing the training and testing DataFrames.
+    """
+    # Extract the group (ID) column from the DataFrame
+    groups = df[id_column]
+
+    # Initialize GroupShuffleSplit with specified parameters
+    gss = GroupShuffleSplit(n_splits=1, test_size=test_size, random_state=random_state)
+
+    # Perform the data split while preserving groups (IDs)
+    for train_index, test_index in gss.split(df, groups=groups):
+        # Obtain the training data using the training indices
+        train_data = df.iloc[train_index]
+        # Obtain the testing data using the testing indices
+        test_data = df.iloc[test_index]
+
+    # Return the training and testing DataFrames
+    return train_data, test_data
 
 
 def convert_dataframe_to_array_by_id(df):
@@ -52,7 +84,7 @@ def split_array(array, percentage):
     return part1, part2
 
 
-def keep_same_number_of_zeros_as_ones(df, is_divided_to_races):
+def keep_same_number_of_zeros_as_ones(df, is_divided_to_races=False):
     result_df = None
 
     if not is_divided_to_races:
@@ -238,6 +270,115 @@ def classification_with_individual_results(df, target):
     return result
 
 
-def split_to_first_3_and_the_rest(df, target):
-    return "not implemented"
+def classify_by_race_without_conversion(df, target):
 
+    df = df.fillna(df.median())
+    x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
+
+    y_train = x_train[target]
+    x_train = x_train.drop(target, axis='columns')
+
+    y_test = x_test[target]
+    x_test = x_test.drop(target, axis='columns')
+
+    print(x_train, x_test, y_train, y_test)
+
+    model = SVC()
+    y_train = y_train.astype(int)
+    y_test = y_test.astype(int)
+
+    model.fit(x_train, y_train)
+    result = model.score(x_test, y_test)
+
+    x_predicted = model.predict(x_test)
+    x_predicted_ps = pd.Series(x_predicted)
+
+    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+
+    return result
+
+
+def split_to_first_3_and_the_rest(df, target):
+    df = df.fillna(df.median())
+    x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
+
+    y_train = x_train[target]
+
+    # Set target column to 1 for IDs 1 to 3
+    x_train.loc[df[target].isin([1, 2, 3]), target] = 1
+    # Set target column to 0 for IDs not in 1 to 3
+    x_train.loc[~df[target].isin([1, 2, 3]), target] = 0
+
+    x_train = keep_same_number_of_zeros_as_ones(x_train)
+
+    y_train_top_3_binary = x_train[target]
+    x_train = x_train.drop(target, axis='columns')
+
+    temp_x_test = x_test.copy()
+    temp_x_test.loc[df[target].isin([1]), target] = 1
+    temp_x_test.loc[~df[target].isin([1]), target] = 0
+    y_test_top_1_binary = temp_x_test[target]
+
+    y_test = x_test[target]
+    x_test.loc[df[target].isin([1, 2, 3]), target] = 1
+    x_test.loc[~df[target].isin([1, 2, 3]), target] = 0
+    y_test_top_3_binary = x_test[target]
+    x_test = x_test.drop(target, axis='columns')
+
+    # predict top 3
+    model_top_3 = SVC()
+    y_train_top_3_binary = y_train_top_3_binary.astype(int)
+    y_test_top_3_binary = y_test_top_3_binary.astype(int)
+
+    # Count the occurrences of each value in the "target" column
+    # value_counts = y_train_top_3_binary.value_counts()
+
+    # Access the counts of 0 and 1
+    # count_0 = value_counts.get(0, 0)
+    # count_1 = value_counts.get(1, 0)
+
+    # Print the counts
+    # print("Count of 0:", count_0)
+    # print("Count of 1:", count_1)
+
+    model_top_3.fit(x_train, y_train_top_3_binary)
+    result = model_top_3.score(x_test, y_test_top_3_binary)
+
+    x_predicted = model_top_3.predict(x_test)
+    x_predicted_ps = pd.Series(x_predicted)
+    x_predicted_df = pd.DataFrame(x_predicted)
+    print(x_predicted_ps)
+    get_zero_and_one_accuracy(y_test_top_3_binary, x_predicted_ps)
+
+    filtered_features = []
+    filtered_results = []
+
+    for (index, x_test_row), y_test_top_1_binary_row, x_predicted_row in zip(x_test.iterrows(), y_test_top_1_binary, x_predicted):
+
+        if x_predicted_row == 1:
+            filtered_features.append(x_test_row)
+            filtered_results.append(y_test_top_1_binary_row)
+
+    # Convert the list of rows to a DataFrame
+    filtered_features_df = pd.DataFrame(filtered_features, columns=x_test.columns)
+    filtered_features_df.reset_index(drop=True, inplace=True)
+    filtered_results_df = pd.DataFrame(filtered_results)
+
+    filtered_features_df[target] = filtered_results_df
+
+    # predict top 1
+    model_top_1 = SVC()
+
+    x_train_top_1, x_test_top_1 = custom_group_split(df, 'ID', 0.2, 42)
+    y_train_top_1 = x_train_top_1[target]
+    y_test_top_1 = x_test_top_1[target]
+
+    model_top_1.fit(x_train_top_1, y_train_top_1)
+    result = model_top_1.score(x_test_top_1, y_test_top_1)
+
+    x_predicted_top_1 = model_top_1.predict(x_test_top_1)
+    x_predicted_ps_top_1 = pd.Series(x_predicted_top_1)
+
+    get_zero_and_one_accuracy(y_test_top_1, x_predicted_top_1)
+
+    return result,
