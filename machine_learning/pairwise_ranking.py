@@ -1,5 +1,7 @@
 from sklearn.model_selection import GroupShuffleSplit
+from scipy.stats import kendalltau, spearmanr
 import xgboost as xgb
+import math
 
 
 def train_test_split_and_modelling(df):
@@ -74,12 +76,78 @@ def start_ranking(df):
     return ranked_samples
 
 
+def evaluate_kendall_tau(ranked_samples):
+    kendall_tau_scores = {}
+    for group, data in ranked_samples.items():
+        predicted_positions = data['predicted_positions']
+        original_positions = data['original_RES21']
+
+        tau, _ = kendalltau(predicted_positions, original_positions)
+
+        kendall_tau_scores[group] = tau
+
+    return kendall_tau_scores
+
+
+def evaluate_spearman_rho(ranked_samples):
+    spearman_rho_scores = {}
+    for group, data in ranked_samples.items():
+        predicted_positions = data['predicted_positions']
+        original_positions = data['original_RES21']
+
+        rho, _ = spearmanr(predicted_positions, original_positions)
+
+        spearman_rho_scores[group] = rho
+
+    return spearman_rho_scores
+
+
+def calculate_average_score(scores):
+    filtered_scores = {}
+
+    for key, value in scores.items():
+        if not math.isnan(value):
+            filtered_scores[key] = value
+
+    if not filtered_scores:
+        return float('nan')
+
+    total_tau = sum(filtered_scores.values())
+    average_tau = total_tau / len(filtered_scores)
+
+    return average_tau
+
+
+def count_first_position_predictions(result):
+    correct_first_positions = 0
+    wrong_first_positions = 0
+
+    for group, data in result.items():
+        if data['predicted_positions'][0] == 1:
+            correct_first_positions += 1
+        else:
+            wrong_first_positions += 1
+
+    return correct_first_positions / (correct_first_positions + wrong_first_positions)
+
+
 def pairwise_learn_to_rank(df, target):
     result = start_ranking(df)
 
-    for group, data in result.items():
-        print("Group ID:", group)
-        print("Predicted Positions:", data['predicted_positions'])
-        print("Original RES21 Values:", data['original_RES21'])
+    kendall_tau_scores = evaluate_kendall_tau(result)
+    average_tau = calculate_average_score(kendall_tau_scores)
+    print("Kendall Tau értékek átlaga:", average_tau)
+
+    rho = evaluate_spearman_rho(result)
+    average_rho = calculate_average_score(rho)
+    print("Spearman's rho értékek átlaga:", average_rho)
+
+    predicted_first_positions = count_first_position_predictions(result)
+    print("Eltalált elsőhelyezettek: ", predicted_first_positions)
+
+    # for group, data in result.items():
+    #     print("Group ID:", group)
+    #     print("Predicted Positions:", data['predicted_positions'])
+    #     print("Original RES21 Values:", data['original_RES21'])
 
     return result

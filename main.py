@@ -58,7 +58,7 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algo
             end = time.time()
             print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
             print('\n')
-            print("Test Accuracy: " + str(score))
+            # print("Test Accuracy: " + str(score))
 
     return 0
 
@@ -66,7 +66,7 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algo
 copy_files = False
 create_feature_vectors = False
 run_learning = True
-amount_of_races = 1000
-algorythm = "split_to_first_3_and_the_rest"
+amount_of_races = 5000
+algorythm = "pairwise_learn_to_rank"
 
 main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm)
