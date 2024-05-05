@@ -52,6 +52,10 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algo
             print("Start machine learning...")
 
             start = time.time()
+            if median == "drop":
+                selected_feature_vectors = selected_feature_vectors.dropna()
+            if median == "fill":
+                selected_feature_vectors = selected_feature_vectors.fillna(selected_feature_vectors.median())
 
             score = learn_and_test(selected_feature_vectors, RES_TARGET, algorythm)
             print('\n')
@@ -67,6 +71,7 @@ copy_files = False
 create_feature_vectors = False
 run_learning = True
 amount_of_races = 5000
-algorythm = "pairwise_learn_to_rank"
+algorythm = "classify_by_race_without_conversion"
+median = "drop"
 
-main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm)
+main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm, median)

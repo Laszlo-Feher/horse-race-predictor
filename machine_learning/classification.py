@@ -185,7 +185,7 @@ def classification_with_bulk_fvs(df, target):
     df = convert_result_to_binary(df)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.expand_frame_repr', False)
-    df = df.fillna(df.median())
+
     x_train, x_test, y_train, y_test = train_test_split(df.drop(target, axis='columns'), df[target], test_size=0.2)
     model = SVC()
     y_train = y_train.astype(int)
@@ -204,7 +204,6 @@ def classification_with_bulk_fvs(df, target):
 def classification_with_equal_results(df_original, target, is_divided_to_races=False):
     df = convert_result_to_binary(df_original)
     df = keep_same_number_of_zeros_as_ones(df_original, is_divided_to_races)
-    df = df.fillna(df.median())
 
     x_train, x_test, y_train, y_test = train_test_split(df.drop(target, axis='columns'), df[target], test_size=0.2)
 
@@ -225,7 +224,6 @@ def classification_with_equal_results(df_original, target, is_divided_to_races=F
 
 def classification_with_individual_results(df, target):
     df = convert_result_to_binary(df)
-    df = df.fillna(df.median())
     df = convert_dataframe_to_array_by_id(df)
 
     df_train, df_test = split_array(df, 0.8)
@@ -272,7 +270,6 @@ def classification_with_individual_results(df, target):
 
 def classify_by_race_without_conversion(df, target):
 
-    df = df.fillna(df.median())
     x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
 
     y_train = x_train[target]
@@ -297,7 +294,6 @@ def classify_by_race_without_conversion(df, target):
 
 
 def split_to_first_3_and_the_rest(df, target):
-    df = df.fillna(df.median())
     x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
 
     # Set target column to 1 for IDs 1 to 3
