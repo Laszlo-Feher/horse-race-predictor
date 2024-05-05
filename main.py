@@ -13,7 +13,7 @@ from utils.debug import *
 # estimated time: 994.45 in seconds
 
 
-def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm):
+def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm, median):
     if copy_files:
         filter_files_and_copy()
 
@@ -54,10 +54,21 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algo
             start = time.time()
             if median == "drop":
                 selected_feature_vectors = selected_feature_vectors.dropna()
+
+                races = selected_feature_vectors.groupby('ID')
+                for race_id, race_df in races:
+                    if race_df['RES21'].min() != 1:
+                        selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+                    elif race_df['RES21'].max() == 1:
+                        selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+
             if median == "fill":
                 selected_feature_vectors = selected_feature_vectors.fillna(selected_feature_vectors.median())
 
-            score = learn_and_test(selected_feature_vectors, RES_TARGET, algorythm)
+            current_time = datetime.datetime.now()
+            formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+            formatted_time = formatted_time + " - " + str(amount_of_races)
+            score = learn_and_test(selected_feature_vectors, RES_TARGET, algorythm, formatted_time)
             print('\n')
             end = time.time()
             print("Time Usage: " + str(round((end - start), 2)) + " in seconds")
@@ -70,8 +81,8 @@ def main(copy_files, create_feature_vectors, run_learning, amount_of_races, algo
 copy_files = False
 create_feature_vectors = False
 run_learning = True
-amount_of_races = 5000
-algorythm = "classify_by_race_without_conversion"
+amount_of_races = 500
+algorythm = "all"
 median = "drop"
 
 main(copy_files, create_feature_vectors, run_learning, amount_of_races, algorythm, median)

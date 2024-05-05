@@ -98,7 +98,7 @@ def keep_same_number_of_zeros_as_ones(df, is_divided_to_races=False):
     return result_df
 
 
-def get_zero_and_one_accuracy(y_data, x_data):
+def get_zero_and_one_accuracy_and_make_report(y_data, x_data, formatted_time, file_name, folder='classifications'):
     result_report = []
     result_ones_all = 0
     result_ones_true = 0
@@ -177,11 +177,11 @@ def get_zero_and_one_accuracy(y_data, x_data):
     for item in result_report:
         print(item)
 
-    file_name = create_text_file()
+    file_name = create_text_file(formatted_time, folder, file_name)
     write_to_file(result_report, file_name)
 
 
-def classification_with_bulk_fvs(df, target):
+def classification_with_bulk_fvs(df, target, formatted_time):
     df = convert_result_to_binary(df)
     pd.set_option('display.max_columns', None)
     pd.set_option('display.expand_frame_repr', False)
@@ -196,12 +196,12 @@ def classification_with_bulk_fvs(df, target):
     x_predicted = model.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classification_with_bulk_fvs')
 
     return result
 
 
-def classification_with_equal_results(df_original, target, is_divided_to_races=False):
+def classification_with_equal_results(df_original, target, formatted_time, is_divided_to_races=False):
     df = convert_result_to_binary(df_original)
     df = keep_same_number_of_zeros_as_ones(df_original, is_divided_to_races)
 
@@ -217,15 +217,15 @@ def classification_with_equal_results(df_original, target, is_divided_to_races=F
     x_predicted = model.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classification_with_equal_results')
 
     return result
 
 
-def classification_with_individual_results(df, target):
+def classification_with_individual_results(df, target, formatted_time):
     df = convert_result_to_binary(df)
     df = convert_dataframe_to_array_by_id(df)
-
+    df = [d.fillna(d.median()) for d in df]
     df_train, df_test = split_array(df, 0.8)
     x_train, y_train, x_test, y_test = None, None, None, None
     result = []
@@ -255,7 +255,7 @@ def classification_with_individual_results(df, target):
         x_predicted = model.predict(x_test)
         x_predicted_ps = pd.Series(x_predicted)
 
-        get_zero_and_one_accuracy(y_test, x_predicted_ps)
+        get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classification_with_individual_results')
 
         score = model.score(x_test, y_test)
         result.append(score)
@@ -263,12 +263,12 @@ def classification_with_individual_results(df, target):
     x_predicted = model.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classification_with_individual_results')
 
     return result
 
 
-def classify_by_race_without_conversion(df, target):
+def classify_by_race_without_conversion(df, target, formatted_time):
 
     x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
 
@@ -288,12 +288,12 @@ def classify_by_race_without_conversion(df, target):
     x_predicted = model.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy(y_test, x_predicted_ps)
+    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classify_by_race_without_conversion')
 
     return result
 
 
-def split_to_first_3_and_the_rest(df, target):
+def split_to_first_3_and_the_rest(df, target, formatted_time):
     x_train, x_test = custom_group_split(df, 'ID', 0.2, 42)
 
     # Set target column to 1 for IDs 1 to 3
@@ -334,7 +334,7 @@ def split_to_first_3_and_the_rest(df, target):
     x_predicted = model_top_3.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy(y_test_top_3_binary, x_predicted_ps)
+    get_zero_and_one_accuracy_and_make_report(y_test_top_3_binary, x_predicted_ps, formatted_time, 'split_to_first_3_and_the_rest')
 
     filtered_features = []
     filtered_results = []
@@ -365,6 +365,6 @@ def split_to_first_3_and_the_rest(df, target):
     x_predicted_top_1 = model_top_1.predict(x_test_top_1)
     x_predicted_ps_top_1 = pd.Series(x_predicted_top_1)
 
-    get_zero_and_one_accuracy(y_test_top_1, x_predicted_ps_top_1)
+    get_zero_and_one_accuracy_and_make_report(y_test_top_1, x_predicted_ps_top_1, formatted_time, 'split_to_first_3_and_the_rest')
 
     return result,

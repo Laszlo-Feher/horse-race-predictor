@@ -44,6 +44,7 @@ Reports structure:
     - classification_with_equal_results - (txt)
     - classification_with_individual_results - (txt)
     - split_to_first_3_and_the_rest - (txt)
+    - classify_by_race_without_conversion (txt)
   - learn_to_rank - (sub_folder)
     - pairwise - (txt)
     - listwise - (txt)

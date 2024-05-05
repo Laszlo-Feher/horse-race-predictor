@@ -3,6 +3,8 @@ from scipy.stats import kendalltau, spearmanr
 import xgboost as xgb
 import math
 
+from io_utils.file_writer import create_text_file, write_to_file
+
 
 def train_test_split_and_modelling(df):
     gss = GroupShuffleSplit(test_size=.40, n_splits=1, random_state=7).split(df, groups=df['ID'])
@@ -131,23 +133,46 @@ def count_first_position_predictions(result):
     return correct_first_positions / (correct_first_positions + wrong_first_positions)
 
 
-def pairwise_learn_to_rank(df, target):
-    result = start_ranking(df)
+def get_ltr_accuracy_and_make_report(result, formatted_time, file_name, folder='learn_to_rank'):
+    result_report = ["\n"]
 
     kendall_tau_scores = evaluate_kendall_tau(result)
     average_tau = calculate_average_score(kendall_tau_scores)
-    print("Kendall Tau értékek átlaga:", average_tau)
+    average_tau_text = "Kendall Tau értékek átlaga: " + str(average_tau)
+    result_report.append(average_tau_text)
 
     rho = evaluate_spearman_rho(result)
     average_rho = calculate_average_score(rho)
-    print("Spearman's rho értékek átlaga:", average_rho)
+    average_rho_text = "Spearman's rho értékek átlaga: " + str(average_rho)
+    result_report.append(average_rho_text)
 
     predicted_first_positions = count_first_position_predictions(result)
-    print("Eltalált elsőhelyezettek: ", predicted_first_positions)
+    predicted_first_positions_text = "Eltalált elsőhelyezettek: " + str(predicted_first_positions)
+    result_report.append(predicted_first_positions_text)
 
-    # for group, data in result.items():
-    #     print("Group ID:", group)
-    #     print("Predicted Positions:", data['predicted_positions'])
-    #     print("Original RES21 Values:", data['original_RES21'])
+    result_report.append("\n")
 
-    return result
+    for index, (group, data) in enumerate(result.items()):
+        if index <= 10:
+            race_report = (
+                'group_id: ' + str(group) + '\n' +
+                'predicted_positions: ' + ', '.join(map(str, data['predicted_positions'])) + '\n' +
+                'original_RES21: ' + ', '.join(map(str, data['original_RES21'])) + '\n'
+            )
+
+            result_report.append(race_report)
+        else:
+            break
+
+    for item in result_report:
+        print(item)
+
+    file_name = create_text_file(formatted_time, folder, file_name)
+    write_to_file(result_report, file_name)
+
+
+def pairwise_learn_to_rank(df, target, formatted_time):
+    result = start_ranking(df)
+    get_ltr_accuracy_and_make_report(result, formatted_time, 'pairwise_learn_to_rank')
+
+    return None

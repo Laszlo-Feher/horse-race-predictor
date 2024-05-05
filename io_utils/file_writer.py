@@ -2,17 +2,24 @@ import os
 import datetime
 
 
-def create_text_file():
+def create_text_file(formatted_time, folder, file_name):
     current_time = datetime.datetime.now()
 
-    formatted_time = current_time.strftime("%Y-%m-%d-%H-%M-%S")
+    reports_folder = "reports"
+    if not os.path.exists(reports_folder):
+        os.makedirs(reports_folder)
 
-    if not os.path.exists("reports"):
-        os.makedirs("reports")
+    time_folder = os.path.join(reports_folder, formatted_time)
+    if not os.path.exists(time_folder):
+        os.makedirs(time_folder)
 
-    file_path = os.path.join("reports", f"{formatted_time}.txt")
+    method_folder = os.path.join(time_folder, folder)
+    if not os.path.exists(method_folder):
+        os.makedirs(method_folder)
 
-    with open(file_path, "w") as file:
+    file_path = os.path.join(method_folder, f"{file_name}.txt")
+
+    with open(file_path, "a") as file:
         file.write(current_time.strftime("%Y-%m-%d - %H:%M:%S") + "\n")
 
     return file_path
