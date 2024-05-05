@@ -245,7 +245,7 @@ def classification_with_individual_results(df, target, formatted_time):
 
         if iterator == 0:
             iterator = 1
-            print(x_train, '\n', y_train)
+            # print(x_train, '\n', y_train)
 
     for element in df_test:
         element = element.astype(int)
