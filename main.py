@@ -13,6 +13,10 @@ from utils.debug import *
 # number of races: 47081
 # estimated time: 994.45 in seconds
 
+# number of rows: 352556
+# number of rows having nan values: 7854
+# number of rows after nan is removed: 305200
+
 
 def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median):
     if copy_files:
@@ -55,14 +59,17 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 
                 start = time.time()
                 if median == "drop":
-                    selected_feature_vectors = selected_feature_vectors.dropna()
+                    rows_with_nan_ids = selected_feature_vectors.loc[selected_feature_vectors.isnull().any(axis=1), 'ID'].tolist()
+                    selected_feature_vectors = selected_feature_vectors[~selected_feature_vectors['ID'].isin(rows_with_nan_ids)]
 
-                    races = selected_feature_vectors.groupby('ID')
-                    for race_id, race_df in races:
-                        if race_df['RES21'].min() != 1:
-                            selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
-                        elif race_df['RES21'].max() == 1:
-                            selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+                    # remove only nan values, and races where only 1 value or doesn't have 1 value
+                    # selected_feature_vectors = selected_feature_vectors.dropna()
+                    # races = selected_feature_vectors.groupby('ID')
+                    # for race_id, race_df in races:
+                    #     if race_df['RES21'].min() != 1:
+                    #         selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+                    #     elif race_df['RES21'].max() == 1:
+                    #         selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
 
                 if median == "fill":
                     selected_feature_vectors = selected_feature_vectors.fillna(selected_feature_vectors.median())
@@ -83,8 +90,8 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 copy_files = False
 create_feature_vectors = False
 run_learning = True
-amounts_of_races = [500, 1000, 2000, 5000]
-algorythm = "all"
+amounts_of_races = [47081]
+algorythm = "listwise_learn_to_rank"
 median = "drop"
 
 main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median)
