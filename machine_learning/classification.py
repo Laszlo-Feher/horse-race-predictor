@@ -98,7 +98,7 @@ def keep_same_number_of_zeros_as_ones(df, is_divided_to_races=False):
     return result_df
 
 
-def get_zero_and_one_accuracy_and_make_report(y_data, x_data, formatted_time, file_name, folder='classifications'):
+def get_zero_and_one_accuracy_and_make_report(y_data, x_data, formatted_time, file_name, zeros=True, folder='classifications'):
     result_report = []
     result_ones_all = 0
     result_ones_true = 0
@@ -152,27 +152,28 @@ def get_zero_and_one_accuracy_and_make_report(y_data, x_data, formatted_time, fi
 
     result_report.append("\n")
 
-    predicted_zeros = "Predikált 0-ások: " + str(predicted_zeros_all)
-    result_report.append(predicted_zeros)
+    if zeros:
+        predicted_zeros = "Predikált 0-ások: " + str(predicted_zeros_all)
+        result_report.append(predicted_zeros)
 
-    predicted_zeros_true_str = "Ebből helyes: " + str(predicted_zeros_true)
-    result_report.append(predicted_zeros_true_str)
+        predicted_zeros_true_str = "Ebből helyes: " + str(predicted_zeros_true)
+        result_report.append(predicted_zeros_true_str)
 
-    if predicted_zeros_all != 0:
-        predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + str(predicted_zeros_true / predicted_zeros_all)
-    else:
-        predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + '0'
-    result_report.append(predicted_zeros_accuracy_str)
+        if predicted_zeros_all != 0:
+            predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + str(predicted_zeros_true / predicted_zeros_all)
+        else:
+            predicted_zeros_accuracy_str = "Predikált 0-ások pontossága: " + '0'
+        result_report.append(predicted_zeros_accuracy_str)
 
-    real_zeros = "Valós 0-ások: " + str(result_zeros_all)
-    result_report.append(real_zeros)
+        real_zeros = "Valós 0-ások: " + str(result_zeros_all)
+        result_report.append(real_zeros)
 
-    if result_zeros_all != 0:
-        real_zeros_accuracy_str = "Valós 0-ások pontossága: " + str(result_zeros_true / result_zeros_all)
-    else:
-        real_zeros_accuracy_str = "Valós 0-ások pontossága: " + '0'
+        if result_zeros_all != 0:
+            real_zeros_accuracy_str = "Valós 0-ások pontossága: " + str(result_zeros_true / result_zeros_all)
+        else:
+            real_zeros_accuracy_str = "Valós 0-ások pontossága: " + '0'
 
-    result_report.append(real_zeros_accuracy_str)
+        result_report.append(real_zeros_accuracy_str)
 
     for item in result_report:
         print(item)
@@ -288,7 +289,7 @@ def classify_by_race_without_conversion(df, target, formatted_time):
     x_predicted = model.predict(x_test)
     x_predicted_ps = pd.Series(x_predicted)
 
-    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classify_by_race_without_conversion')
+    get_zero_and_one_accuracy_and_make_report(y_test, x_predicted_ps, formatted_time, 'classify_by_race_without_conversion', False)
 
     return result
 
