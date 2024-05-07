@@ -1,6 +1,35 @@
 import pandas as pd
 
 
+def get_race_participants(dataframe, number_of_racers):
+    # Group the dataframe by 'ID' and count the occurrences of each ID
+    race_counts = dataframe['ID'].value_counts()
+
+    # Initialize an empty dictionary to store the results
+    race_dict = {}
+    # print(race_counts)
+    # print(race_counts.unique())
+
+    for num_racers in race_counts.unique():
+        # Get the IDs of races with the current number of racers
+        race_ids = race_counts[race_counts == num_racers].index.tolist()
+        # Add the number of racers and corresponding race IDs to the dictionary
+        race_dict[num_racers] = race_ids
+
+    # for key, value in race_dict.items():
+    #     print(f"For value {key}, the length of the array is {len(value)}")
+
+    # Check if the key is equal to 7
+    if number_of_racers in race_dict:
+        # Extract IDs associated with 7 racers
+        ids_with_x_racers = race_dict[number_of_racers]
+        # Filter the original dataframe to create a new dataframe with rows containing these IDs
+        new_dataframe = dataframe[dataframe['ID'].isin(ids_with_x_racers)]
+        return new_dataframe
+
+    return race_dict
+
+
 # Log out the entire DataFrame without truncation
 def print_dataframe_fully(df):
     with pd.option_context('display.max_rows', None, 'display.max_columns', None):

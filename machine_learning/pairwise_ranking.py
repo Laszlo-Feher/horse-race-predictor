@@ -6,7 +6,7 @@ import math
 from io_utils.file_writer import create_text_file, write_to_file
 
 
-def train_test_split_and_modelling(df):
+def train_test_split_and_modelling(df, algorythm):
     gss = GroupShuffleSplit(test_size=.40, n_splits=1, random_state=7).split(df, groups=df['ID'])
 
     X_train_inds, X_test_inds = next(gss)
@@ -29,7 +29,7 @@ def train_test_split_and_modelling(df):
     y_test = test_data.loc[:, 'RES21']
 
     model = xgb.XGBRanker(
-        objective='rank:pairwise',
+        objective=f'rank:{algorythm}',
         random_state=42,
         learning_rate=0.1,
         colsample_bytree=0.9,
@@ -57,9 +57,9 @@ def rank_feature(predictions):
     return ranked_samples
 
 
-def start_ranking(df):
+def start_ranking(df, algorythm):
     # Train ranking model
-    model, X_test, y_test = train_test_split_and_modelling(df)
+    model, X_test, y_test = train_test_split_and_modelling(df, algorythm)
 
     # Predict
     predictions = (X_test.groupby('ID')
@@ -171,8 +171,22 @@ def get_ltr_accuracy_and_make_report(result, formatted_time, file_name, folder='
     write_to_file(result_report, file_name)
 
 
-def pairwise_learn_to_rank(df, target, formatted_time):
-    result = start_ranking(df)
-    get_ltr_accuracy_and_make_report(result, formatted_time, 'pairwise_learn_to_rank')
+def pairwise_learn_to_rank_pairwise(df, target, formatted_time):
+    result = start_ranking(df, 'pairwise')
+    get_ltr_accuracy_and_make_report(result, formatted_time, 'pairwise_learn_to_rank_pairwise')
+
+    return None
+
+
+def pairwise_learn_to_rank_ndcg(df, target, formatted_time):
+    result = start_ranking(df, 'ndcg')
+    get_ltr_accuracy_and_make_report(result, formatted_time, 'pairwise_learn_to_rank_ndcg')
+
+    return None
+
+
+def pairwise_learn_to_rank_map(df, target, formatted_time):
+    result = start_ranking(df, 'map')
+    get_ltr_accuracy_and_make_report(result, formatted_time, 'pairwise_learn_to_rank_map')
 
     return None

@@ -51,7 +51,7 @@ def replace_strings_with_numbers(df, column_name):
 
 def group_races_by_id(df, race_id):
     df.reset_index(drop=True, inplace=True)
-
+    df['RES4'] = df['RES4'].astype(float)
     df['ID'] = 0
 
     for index, row in df.iterrows():

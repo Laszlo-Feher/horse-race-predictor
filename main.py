@@ -17,6 +17,20 @@ from utils.debug import *
 # number of rows having nan values: 7854
 # number of rows after nan is removed: 305200
 
+# For value 14, the length of the array is 47
+# For value 13, the length of the array is 62
+# For value 12, the length of the array is 937
+# For value 11, the length of the array is 1174
+# For value 10, the length of the array is 3017
+# For value 9, the length of the array is 4613
+# For value 8, the length of the array is 6999
+# For value 7, the length of the array is 9148
+# For value 6, the length of the array is 8994
+# For value 5, the length of the array is 4282
+# For value 4, the length of the array is 1217
+# For value 3, the length of the array is 409
+# For value 2, the length of the array is 267
+# For value 1, the length of the array is 179
 
 def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median):
     if copy_files:
@@ -64,12 +78,14 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 
                     # remove only nan values, and races where only 1 value or doesn't have 1 value
                     # selected_feature_vectors = selected_feature_vectors.dropna()
-                    # races = selected_feature_vectors.groupby('ID')
-                    # for race_id, race_df in races:
-                    #     if race_df['RES21'].min() != 1:
-                    #         selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
-                    #     elif race_df['RES21'].max() == 1:
-                    #         selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+                    races = selected_feature_vectors.groupby('ID')
+                    for race_id, race_df in races:
+                        if race_df['RES21'].min() != 1:
+                            selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+                        elif race_df['RES21'].max() == 1:
+                            selected_feature_vectors = selected_feature_vectors[selected_feature_vectors['ID'] != race_id]
+
+                    # selected_feature_vectors = get_race_participants(selected_feature_vectors)
 
                 if median == "fill":
                     selected_feature_vectors = selected_feature_vectors.fillna(selected_feature_vectors.median())
@@ -90,8 +106,8 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 copy_files = False
 create_feature_vectors = False
 run_learning = True
-amounts_of_races = [47081]
-algorythm = "listwise_learn_to_rank"
+amounts_of_races = [5000]
+algorythm = "all"
 median = "drop"
 
 main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median)
