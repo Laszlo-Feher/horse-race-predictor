@@ -1,10 +1,6 @@
 # horse-race-predictor
 
 Classification methods:
-- TODO: remove ids
-- TODO: doesn't break races
-- TODO: throw median check number
-
 
 - classification_with_bulk_fvs:
   + train - test data: 80 - 20%
