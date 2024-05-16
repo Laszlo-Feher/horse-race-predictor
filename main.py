@@ -106,7 +106,8 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 copy_files = False
 create_feature_vectors = False
 run_learning = True
-amounts_of_races = [5000]
+amounts_of_races = [100, 200, 300, 500, 1000, 1500, 2000, 3000, 5000, 10000, 15000, 20000]
+# amounts_of_races = [200]
 algorythm = "all"
 median = "drop"
 
