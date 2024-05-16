@@ -26,7 +26,7 @@ def train_test_split_and_modelling(df, algorythm):
 
     # We need to keep the id for later predictions
     X_test = test_data.loc[:]
-    y_test = test_data.loc[:, 'RES21']
+    y_test = test_data.loc[:, ['ID', 'RES21']]
 
     model = xgb.XGBRanker(
         objective=f'rank:{algorythm}',
@@ -72,7 +72,7 @@ def start_ranking(df, algorythm):
     for group, indices in ranked_samples.items():
         ranked_samples[group] = {
             'predicted_positions': indices + 1,  # Start ranking from 1
-            'original_RES21': df.loc[df['ID'] == group, 'RES21'].values
+            'original_RES21': y_test.loc[y_test['ID'] == group, 'RES21'].values
         }
 
     return ranked_samples

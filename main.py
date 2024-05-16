@@ -91,7 +91,7 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
                     selected_feature_vectors = selected_feature_vectors.fillna(selected_feature_vectors.median())
 
                 current_time = datetime.datetime.now()
-                formatted_time = current_time.strftime("%Y-%m-%d %H:%M:%S")
+                formatted_time = current_time.strftime("%Y-%m-%d %H-%M-%S")
                 formatted_time = formatted_time + " - " + str(amount_of_races)
                 score = learn_and_test(selected_feature_vectors, RES_TARGET, algorythm, formatted_time)
                 print('\n')

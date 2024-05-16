@@ -11,7 +11,7 @@ def remove_columns(dataframe, columns_to_remove):
 
 
 string_to_number_mapping = {
-    HOR_FIELD_NAMES[5]: {
+    HOR_FIELD_NAMES[7]: {
         '2': 1,
         '2UP': 2,
         '3': 3,
@@ -32,10 +32,13 @@ string_to_number_mapping = {
         '5UP': 8
     },
     ENT_FIELD_NAMES[11]: {
-        'f': 1,
-        'm': 2,
+        'c': 1,
+        'h': 2,
         'g': 3,
-        'c': 4
+        'r': 4,
+        'f': 5,
+        'n': 6,
+        'b': 7
     }
 }
 
@@ -140,7 +143,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
 
     # result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E26', 'E28', 'E34', 'R15', 'H18', 'H20', 'H41'])
 
-    result_dataframe = replace_strings_with_numbers(result_dataframe, HOR_FIELD_NAMES[5])
+    result_dataframe = replace_strings_with_numbers(result_dataframe, HOR_FIELD_NAMES[7])
     result_dataframe = replace_strings_with_numbers(result_dataframe, RAC_FIELD_NAMES[9])
     result_dataframe = replace_strings_with_numbers(result_dataframe, ENT_FIELD_NAMES[11])
 
@@ -154,7 +157,7 @@ def convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_da
         result_dataframe, race_id = group_races_by_id(result_dataframe, race_id)
 
         # search for others:
-        result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES + ['E26', 'E34', 'H20', 'H41'])
+        result_dataframe = remove_columns(result_dataframe, HOR_ID_NAMES + ENT_ID_NAMES + RAC_ID_NAMES + RES_ID_NAMES)
 
         return result_dataframe, race_id
     else:
