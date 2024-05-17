@@ -32,12 +32,12 @@ from utils.debug import *
 # For value 2, the length of the array is 267
 # For value 1, the length of the array is 179
 
-def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median):
+def main(copy_files, create_feature_vectors, run_learning, amounts_of_files, amounts_of_races, algorythm, median):
     if copy_files:
         filter_files_and_copy()
 
     if create_feature_vectors:
-        feature_vectors = extract_and_format_data(6589)
+        feature_vectors = extract_and_format_data(amounts_of_files)
         feature_vectors = reset_dataframe_index(feature_vectors)
         feature_vectors = feature_vectors.astype(float)
 
@@ -106,9 +106,9 @@ def main(copy_files, create_feature_vectors, run_learning, amounts_of_races, alg
 copy_files = False
 create_feature_vectors = False
 run_learning = True
+amounts_of_files = 6589
 amounts_of_races = [100, 200, 300, 500, 1000, 1500, 2000, 3000, 5000, 10000, 15000, 20000]
-# amounts_of_races = [200]
 algorythm = "all"
 median = "drop"
 
-main(copy_files, create_feature_vectors, run_learning, amounts_of_races, algorythm, median)
+main(copy_files, create_feature_vectors, run_learning, amounts_of_files, amounts_of_races, algorythm, median)
