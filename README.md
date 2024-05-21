@@ -1,7 +1,8 @@
 # horse-race-predictor
 
-#### Csomagok telepítése: 
-1. pip install -r requirements.txt
+#### Követelmények telepítése: 
+1. python 3.10 telepítése és konfigurálása
+2. pip install -r requirements.txt futtatása a csomagok telepítéséhez
 
 #### Szoftver használata:
 1. Futtatás előtt csomagoljuk ki a demo_data.zip fájlt.
