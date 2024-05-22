@@ -9,7 +9,7 @@ from utils.debug import *
 
 # all files: 6589
 # read files: 6475
-# error - indices exceed the number of columns: TODO
+# error - indices exceed the number of columns:
 # number of races: 47081
 # estimated time: 994.45 in seconds
 

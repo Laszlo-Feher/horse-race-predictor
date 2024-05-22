@@ -228,8 +228,6 @@ def extract_and_format_data(amount_of_files, is_divided_to_races=False, convert_
             h_raw_data = h_raw_data.reset_index(drop=True)
             res_raw_data = res_raw_data.reset_index(drop=True)
 
-            # TODO create field names
-
             r_raw_data.columns = RAC_FIELD_NAMES
             e_raw_data.columns = ENT_FIELD_NAMES
             h_raw_data.columns = HOR_FIELD_NAMES

@@ -61,8 +61,6 @@ def adjust_field_numbers(selected_fields):
     return [field_number - 1 for field_number in selected_fields]
 
 
-# TODO calculate used files
-# TODO if no H
 def read_file(file_path, file_name, selected_fields, file_extension='csv'):
     selected_fields_adjusted = adjust_field_numbers(selected_fields)
 
@@ -81,7 +79,6 @@ def read_file(file_path, file_name, selected_fields, file_extension='csv'):
 
     num_columns = len(data.columns)
 
-    # TODO: overview
     if any(index >= num_columns for index in selected_fields_adjusted):
         print("Error: The indices exceed the number of columns in the DataFrame.", "\n", file_name, data)
         print(data, file_name)
