@@ -1,0 +1,33 @@
+Traceback (most recent call last):
+  File "/home/user1/Desktop/horse-race-predictor/main.py", line 52, in <module>
+
+  File "/home/user1/Desktop/horse-race-predictor/main.py", line 29, in main
+    filter_files_and_copy()
+  File "/home/user1/Desktop/horse-race-predictor/feature_vectors/feature_extractor.py", line 212, in extract_and_format_data
+    extracted_data, race_id = convert_raw_to_extracted_data(r_raw_data, e_raw_data, h_raw_data, res_raw_data, convert_to_binary, race_id)
+  File "/home/user1/Desktop/horse-race-predictor/feature_vectors/feature_extractor.py", line 127, in convert_raw_to_extracted_data
+    result_dataframe[RES_TARGET] = result_dataframe[RES_TARGET].astype(int)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/generic.py", line 6534, in astype
+    new_data = self._mgr.astype(dtype=dtype, copy=copy, errors=errors)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/internals/managers.py", line 414, in astype
+    return self.apply(
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/internals/managers.py", line 354, in apply
+    applied = getattr(b, f)(**kwargs)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/internals/blocks.py", line 616, in astype
+    new_values = astype_array_safe(values, dtype, copy=copy, errors=errors)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/dtypes/astype.py", line 238, in astype_array_safe
+    new_values = astype_array(values, dtype, copy=copy)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/dtypes/astype.py", line 183, in astype_array
+    values = _astype_nansafe(values, dtype, copy=copy)
+  File "/usr/local/lib/python3.10/dist-packages/pandas/core/dtypes/astype.py", line 134, in _astype_nansafe
+    return arr.astype(dtype, copy=True)
+ValueError: cannot convert float NaN to integer
+
+Error: The indices exceed the number of columns in the DataFrame.
+ 20181116_CH_DAY_FL_.txt Empty DataFrame
+Columns: []
+Index: []
+Empty DataFrame
+Columns: []
+Index: [] 20181116_CH_DAY_FL_.txt
+Completed: 31/100%

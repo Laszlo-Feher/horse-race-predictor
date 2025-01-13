@@ -1,6 +1,8 @@
 from machine_learning.classification import classification_with_bulk_fvs, classification_with_individual_results, \
     classification_with_equal_results, split_to_first_3_and_the_rest, classify_by_race_without_conversion
 from machine_learning.pairwise_ranking import pairwise_learn_to_rank_pairwise, pairwise_learn_to_rank_ndcg, pairwise_learn_to_rank_map
+from trying.listwise_ranking import start_ranking_list
+
 
 def learn_and_test(df, target, algorythm, formatted_time):
     result = 'no results'
@@ -43,6 +45,8 @@ def learn_and_test(df, target, algorythm, formatted_time):
             return pairwise_learn_to_rank_pairwise(df, target, formatted_time)
         case "pairwise_learn_to_rank_ndcg":
             return pairwise_learn_to_rank_ndcg(df, target, formatted_time)
+        case "start_ranking_list":
+            return start_ranking_list(df)
         case _:
             print("Not an implemented method!")
 
